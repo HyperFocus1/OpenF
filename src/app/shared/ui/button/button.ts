@@ -1,14 +1,17 @@
 import { booleanAttribute, Component, input } from '@angular/core';
 import { Icon, IconName } from '../icon/icon';
+import { Ripple } from '../ripple/ripple.directive';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 
 @Component({
   selector: 'button[ofButton]',
   imports: [Icon],
+  hostDirectives: [Ripple],
   template: `
+    @if (busy()) { <span class="of-button-spinner" aria-hidden="true"></span> }
     @if (icon() && iconPosition() === 'start' && !busy()) { <of-icon [name]="icon()!" /> }
-    <ng-content />
+    <span class="of-button-content"><ng-content /></span>
     @if (icon() && iconPosition() === 'end' && !busy()) { <of-icon [name]="icon()!" /> }
   `,
   host: {

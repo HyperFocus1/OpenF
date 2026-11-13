@@ -1,0 +1,19 @@
+@layer components {
+  .of-interactive { position: relative; isolation: isolate; }
+  .of-state-layer { position: absolute; z-index: 0; inset: 0; overflow: hidden; border-radius: inherit; pointer-events: none; }
+  .of-state-layer::before { position: absolute; inset: 0; content: ""; background: var(--of-state-color, var(--of-text)); opacity: 0; transition: opacity 15ms linear, background-color 15ms linear; }
+  @media (hover: hover) {
+    .of-interactive:not(:disabled):not([aria-disabled="true"]):hover > .of-state-layer::before { opacity: var(--of-state-hover-opacity, .08); }
+  }
+  .of-interactive:not(:disabled):not([aria-disabled="true"]):focus-visible > .of-state-layer::before { opacity: var(--of-state-focus-opacity, .12); }
+  .of-ripple { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, var(--of-state-color, var(--of-text)) max(100% - 70px, 65%), transparent 100%); opacity: var(--of-state-pressed-opacity, .12); animation: of-ripple-enter 450ms cubic-bezier(.2, 0, 0, 1) both; transition: opacity 375ms linear; }
+  .of-ripple.of-ripple-leaving { opacity: 0; }
+  .of-button-content, .of-button > of-icon, .of-button-spinner { position: relative; z-index: 1; }
+  .of-button-content { display: inline-flex; align-items: center; gap: inherit; }
+  .of-button-spinner { width: 15px; height: 15px; flex: none; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: of-spin .75s linear infinite; }
+}
+
+@keyframes of-ripple-enter { from { transform: scale(0); } to { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .of-ripple { animation: none; transition: none; }
+}

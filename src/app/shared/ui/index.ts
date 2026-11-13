@@ -11,3 +11,4 @@ export type { IconButtonVariant } from './icon-button/icon-button';
 export { ActionGroup } from './action-group/action-group';
 export { PromptInput } from './prompt-input/prompt-input';
 export { Popover } from './popover/popover';
+export { Ripple } from './ripple/ripple.directive';

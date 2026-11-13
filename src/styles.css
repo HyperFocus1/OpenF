@@ -1,6 +1,7 @@
-@import "tailwindcss";
+@import "tailwindcss" source("./app");
 @import "./styles/tokens.css";
 @import "./styles/base.css";
+@import "./styles/interactions.css";
 
 @theme inline {
   --font-sans: var(--of-font);

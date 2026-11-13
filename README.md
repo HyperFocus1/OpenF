@@ -1,6 +1,6 @@
 # OpenF
 
-Frontend con Angular 22, renderizado en cliente (CSR), pnpm y Tailwind CSS. Incluye login, registro y sidebar; el área principal queda vacía.
+Frontend con Angular 22, renderizado en cliente (CSR), pnpm y Tailwind CSS. Incluye login, registro, sidebar y tres vistas iniciales: Home, Kanban y Tree.
 
 ## Requisitos
 
@@ -24,6 +24,10 @@ pnpm install --frozen-lockfile
 | `pnpm build` | Producción con API | `dist/open-f/browser` |
 
 Ejecuta un modo de desarrollo a la vez, o cambia su puerto con `--port 4300`. `pnpm start` equivale a `pnpm dev:api`.
+
+### Vistas
+
+Después de acceder, `/app` redirige a `/app/home`. Las rutas `/app/home`, `/app/kanban` y `/app/tree` muestran únicamente `Hi from Home`, `Hi from Kanban` y `Hi from Tree`. El sidebar obtiene la selección de la URL, incluso al volver atrás o entrar mediante un enlace directo.
 
 ### Demo
 
@@ -63,6 +67,9 @@ src/app/
     auth.router.ts              # Rutas del dominio de autenticación
     components/login/           # Login
     components/register/        # Registro
+  features/home/                # Vista Home
+  features/kanban/              # Vista Kanban
+  features/tree/                # Vista Tree
   shared/
     ui/                         # Design system
     utils/                      # Funciones compartidas
@@ -70,7 +77,7 @@ src/app/
 tests/unit/                     # Pruebas centralizadas, agrupadas por dominio
 ```
 
-`SessionService` mantiene el estado mediante signals e inyecta `AUTH_SERVICE_TOKEN`. `AuthApiServiceImpl` y `AuthMockServiceImpl` implementan el contrato `AuthService`, sin mezclar transporte y estado. Los botones reciben iconos y estados mediante propiedades.
+`SessionService` mantiene el estado mediante signals e inyecta `AUTH_SERVICE_TOKEN`. `AuthApiServiceImpl` y `AuthMockServiceImpl` implementan el contrato `AuthService`, sin mezclar transporte y estado. Los botones reciben iconos y estados mediante propiedades. `IconButton` distingue `kind="navigation"` y `kind="action"`: la navegación usa transición elástica al seleccionar y los botones de acción primarios responden a la presión. La directiva compartida `Ripple` proporciona capas de hover/foco y ondas con puntero o teclado; respeta controles deshabilitados, estado de carga y movimiento reducido.
 
 Tailwind CSS 4 controla la estructura, los espacios, la tipografía y la adaptación móvil de login, registro y sidebar. Los tokens del design system se conectan a Tailwind mediante `@theme inline` en `src/styles.css`. Los estilos base y de controles usan las capas `base` y `components`, de modo que las utilidades pueden ajustarlos sin aumentar la especificidad.
 
@@ -96,6 +103,21 @@ Los alias `@core`, `@models`, `@configs`, `@features`, `@shared` y `@layout` se 
 pnpm test:unit
 ```
 
-Las pruebas se encuentran exclusivamente en `tests/unit/`, con la misma organización por dominios que el código. Angular CLI y `tsconfig.spec.json` están configurados para descubrirlas allí.
+Las pruebas unitarias se encuentran en `tests/unit/`, con la misma organización por dominios que el código. Las interacciones y pruebas de navegador del catálogo están en `tests/storybook/`. Angular CLI y `tsconfig.spec.json` están configurados para descubrirlas allí.
 
 Para ejecutar las pruebas en modo observación: `pnpm test`. Para compilar los modos de desarrollo: `pnpm build:api` y `pnpm build:mock`.
+
+## Storybook
+
+Catálogo de componentes y casos de uso, separado de `src/` y del build de la app. Reutiliza los componentes y estilos reales, con controles editables, eventos e interacciones. Login, registro y sidebar funcionan con fixtures en memoria mediante `AUTH_SERVICE_TOKEN`, sin backend ni peticiones API.
+
+| Comando | Resultado |
+| --- | --- |
+| `pnpm storybook` | Catálogo interactivo en http://localhost:6006 |
+| `pnpm storybook:build` | Catálogo estático en `storybook-static/` |
+| `pnpm storybook:test` | Compila el catálogo y verifica historias, interacciones, estados CSS, móvil y axe en Chromium |
+| `pnpm storybook:check-isolation` | Compila producción y comprueba que no contiene código, fixtures ni CSS exclusivos del catálogo |
+
+Antes de las pruebas de navegador, instala Chromium una vez: `pnpm exec playwright install chromium`. Las fuentes del catálogo son locales. No hace falta ejecutar Java.
+
+Configuración, historias y fixtures: `storybook/`. Pruebas: `tests/storybook/`. La salida `storybook-static/` se ignora en Git; la app sigue saliendo a `dist/open-f/browser/`. Tailwind escanea solo `src/app/` para la app; el catálogo añade sus propias fuentes de clases. Consulta [la guía del catálogo](storybook/README.md) para sus escenarios y para añadir historias.

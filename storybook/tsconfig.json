@@ -1,0 +1,14 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": [],
+    "allowSyntheticDefaultImports": true
+  },
+  "include": [
+    "./**/*.ts",
+    ".storybook/*.ts",
+    "../src/**/*.ts",
+    "../tests/storybook/interactions/**/*.ts"
+  ],
+  "exclude": ["../src/**/*.spec.ts", "../tests/unit/**"]
+}

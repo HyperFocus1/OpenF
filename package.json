@@ -11,7 +11,11 @@
     "build:mock": "ng build --configuration mock",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "test:unit": "ng test --watch=false"
+    "test:unit": "ng test --watch=false",
+    "storybook": "ng run open-f:storybook",
+    "storybook:build": "ng run open-f:build-storybook",
+    "storybook:test": "pnpm storybook:build && playwright test --config tests/storybook/playwright.config.ts",
+    "storybook:check-isolation": "pnpm build && node tests/storybook/assert-isolation.mjs"
   },
   "private": true,
   "packageManager": "pnpm@11.25.0",
@@ -26,13 +30,24 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
+    "@angular-devkit/build-angular": "22.2.6",
+    "@angular/animations": "22.2.5",
     "@angular/build": "^22.2.6",
     "@angular/cli": "^22.2.6",
     "@angular/compiler-cli": "^22.2.0",
+    "@angular/platform-browser-dynamic": "22.2.5",
+    "@fontsource/dm-sans": "^5.3.0",
+    "@playwright/test": "1.65.0",
+    "@storybook/addon-a11y": "10.6.7",
+    "@storybook/addon-docs": "10.6.7",
+    "@storybook/angular": "10.6.7",
     "@tailwindcss/postcss": "^4.1.0",
+    "@types/node": "^24.19.2",
+    "axe-core": "4.14.0",
     "jsdom": "^30.0.0",
     "postcss": "^8.5.0",
     "prettier": "^3.8.1",
+    "storybook": "10.6.7",
     "tailwindcss": "^4.1.0",
     "typescript": "~6.0.2",
     "vitest": "^5.0.0"

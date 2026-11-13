@@ -1,11 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter, map } from 'rxjs';
 import { SessionService } from '@core/services/auth/session.service';
 import { authError } from '@shared/utils/auth-error';
-import { Button, Icon, IconButton, IconName } from '@shared/ui';
-import { Popover } from '@shared/ui/popover/popover';
+import { Button, Icon, IconButton, IconName, Popover } from '@shared/ui';
 
-interface NavigationItem { label: string; icon: IconName; active: boolean; }
+interface NavigationItem { label: string; icon: IconName; path: string; }
 
 @Component({
   selector: 'of-sidebar',
@@ -16,15 +17,22 @@ interface NavigationItem { label: string; icon: IconName; active: boolean; }
 export class Sidebar {
   protected readonly session = inject(SessionService);
   private readonly router = inject(Router);
+  protected readonly currentPath = toSignal(this.router.events.pipe(
+    filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+    map(event => event.urlAfterRedirects.split(/[?#]/)[0]),
+  ), { initialValue: this.router.url.split(/[?#]/)[0] });
   protected readonly menuOpen = signal(false);
   protected readonly signingOut = signal(false);
   protected readonly error = signal('');
   protected readonly items: readonly NavigationItem[] = [
-    { label: 'Inicio', icon: 'home', active: true },
-    { label: 'Tareas', icon: 'checklist', active: false },
-    { label: 'Proyectos', icon: 'projects', active: false },
-    { label: 'Semanas', icon: 'calendar', active: false },
+    { label: 'Home', icon: 'home', path: '/app/home' },
+    { label: 'Kanban', icon: 'kanban', path: '/app/kanban' },
+    { label: 'Tree', icon: 'tree', path: '/app/tree' },
   ];
+
+  protected navigate(path: string): void {
+    void this.router.navigateByUrl(path);
+  }
 
   protected async logout(): Promise<void> {
     this.signingOut.set(true);
