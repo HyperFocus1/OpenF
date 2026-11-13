@@ -1,0 +1,33 @@
+<of-auth-layout title="Crear cuenta" subtitle="Tu próximo comienzo, en un solo lugar.">
+  @if (serverError()) { <of-alert class="mb-5">{{ serverError() }}</of-alert> }
+  <form #formElement class="flex flex-col gap-4" novalidate (submit)="onSubmit($event)" (input)="serverError.set('')" [attr.aria-busy]="registerForm().submitting()">
+    <div class="grid grid-cols-2 gap-3 narrow:grid-cols-1">
+      <of-form-field label="Nombre" controlId="register-name" [error]="errors().name">
+        <input id="register-name" ofInput placeholder=" " autocomplete="given-name" [formField]="registerForm.name"
+          [ofInvalid]="!!errors().name" [attr.aria-describedby]="errors().name ? 'register-name-error' : null">
+      </of-form-field>
+      <of-form-field label="Apellido" controlId="register-last-name" [error]="errors().lastName">
+        <input id="register-last-name" ofInput placeholder=" " autocomplete="family-name" [formField]="registerForm.lastName"
+          [ofInvalid]="!!errors().lastName" [attr.aria-describedby]="errors().lastName ? 'register-last-name-error' : null">
+      </of-form-field>
+    </div>
+    <of-form-field label="Correo" controlId="register-email" [error]="errors().email">
+      <input id="register-email" ofInput type="email" placeholder=" " autocomplete="username" inputmode="email"
+        [formField]="registerForm.email" [ofInvalid]="!!errors().email" [attr.aria-describedby]="errors().email ? 'register-email-error' : null">
+    </of-form-field>
+    <of-form-field label="Contraseña" controlId="register-password" hint="Al menos 8 caracteres." [error]="errors().password">
+      <input id="register-password" ofInput [type]="showPassword() ? 'text' : 'password'" placeholder=" " autocomplete="new-password"
+        [formField]="registerForm.password" [ofInvalid]="!!errors().password" [attr.aria-describedby]="errors().password ? 'register-password-error' : 'register-password-hint'">
+      <of-icon-button fieldEnd [icon]="showPassword() ? 'eye-off' : 'eye'" [label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+        [toggle]="true" [active]="showPassword()" (pressed)="showPassword.update(value => !value)" />
+    </of-form-field>
+    <of-form-field label="Confirmar contraseña" controlId="register-confirm-password" [error]="errors().confirmPassword">
+      <input id="register-confirm-password" ofInput [type]="showPassword() ? 'text' : 'password'" placeholder=" " autocomplete="new-password"
+        [formField]="registerForm.confirmPassword" [ofInvalid]="!!errors().confirmPassword" [attr.aria-describedby]="errors().confirmPassword ? 'register-confirm-password-error' : null">
+    </of-form-field>
+    <button ofButton="primary" size="lg" type="submit" class="mt-2 w-full" [busy]="registerForm().submitting()">
+      {{ registerForm().submitting() ? 'Creando cuenta…' : 'Crear cuenta' }}
+    </button>
+  </form>
+  <p class="mt-7 text-center text-[13px] leading-6 text-content-muted">¿Ya tienes cuenta? <a routerLink="/login" class="of-text-link ml-[5px]">Iniciar sesión</a></p>
+</of-auth-layout>

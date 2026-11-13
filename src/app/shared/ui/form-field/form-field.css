@@ -1,0 +1,10 @@
+:host { display: block; min-width: 0; }
+.control { position: relative; }
+label { position: absolute; z-index: 1; top: 9px; left: 16px; max-width: calc(100% - 32px); color: var(--of-text-muted); font-size: 11px; line-height: 16px; pointer-events: none; transform-origin: left center; transition: top var(--of-transition), transform var(--of-transition), font-size var(--of-transition); }
+.control:has(input:placeholder-shown:not(:focus)) label { top: 50%; transform: translateY(-50%); font-size: 14px; }
+.control:has(input:focus) label { color: var(--of-focus); }
+.control:has(input.of-input--invalid) label { color: var(--of-error); }
+.end { position: absolute; right: 8px; top: 12px; display: flex; }
+.control:has([fieldEnd]) { --of-input-end: 52px; }
+.message { margin: 6px 4px 0; font-size: 12px; line-height: 18px; color: var(--of-text-muted); }
+.error { color: var(--of-error); }

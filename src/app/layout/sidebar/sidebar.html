@@ -1,0 +1,32 @@
+<aside class="fixed inset-y-0 left-0 z-20 w-rail p-6 compact:px-3 compact:py-4">
+  <nav class="flex h-full flex-col items-center" aria-label="Navegación principal">
+    <of-icon-button class="mb-2 text-white [--of-icon-button-color:var(--of-text-strong)]" icon="brand" label="OpenF, opciones de cuenta" size="lg" shape="circle" variant="secondary"
+      popoverTarget="account-menu" [expanded]="menuOpen()" />
+    <div class="flex flex-col items-center gap-0">
+      @for (item of items; track item.icon) {
+        <of-icon-button [icon]="item.icon" [label]="item.active ? item.label : item.label + ', próximamente'"
+          size="lg" shape="circle" variant="secondary" [active]="item.active" [current]="item.active" [unavailable]="!item.active"
+          [tooltip]="item.active ? item.label : item.label + ' · Próximamente'" />
+      }
+    </div>
+    <of-icon-button class="mt-auto" icon="apps" label="Opciones de cuenta" size="lg" shape="circle" variant="secondary"
+      popoverTarget="account-menu" [expanded]="menuOpen()" />
+  </nav>
+</aside>
+<of-popover popoverId="account-menu" label="Opciones de cuenta" (toggled)="menuOpen.set($event)">
+  <h2 class="mx-2 mb-5 text-2xl leading-normal font-medium tracking-[-0.7px]">Opciones</h2>
+  <div class="flex items-center gap-3 p-2">
+    <span class="flex size-9 flex-none items-center justify-center rounded-full bg-black/8"><of-icon name="user" /></span>
+    <div class="flex min-w-0 flex-col gap-0.5">
+      <strong class="overflow-hidden text-[13px] font-semibold text-ellipsis">{{ session.user()?.name }}</strong>
+      <span class="truncate text-[11px] text-[#3b3b40]">{{ session.user()?.email }}</span>
+    </div>
+  </div>
+  <div class="mx-2 mt-3 mb-2 h-px bg-black/12"></div>
+  <button ofButton="ghost" icon="logout" type="button"
+    class="flex min-h-12 w-full items-center justify-start gap-3 rounded-control border-0 bg-transparent p-3 text-left text-[13px] font-normal text-inherit hover:bg-black/8 focus-visible:outline-[#25254d]"
+    [busy]="signingOut()" (click)="logout()">
+    <span>{{ signingOut() ? 'Cerrando sesión…' : 'Cerrar sesión' }}</span>
+  </button>
+  @if (error()) { <p class="px-3 py-2 text-xs leading-normal text-[#691c13]" role="alert">{{ error() }}</p> }
+</of-popover>

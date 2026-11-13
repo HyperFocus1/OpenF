@@ -1,0 +1,10 @@
+<div class="control">
+  <ng-content select="input" />
+  <label [for]="controlId()">{{ label() }}</label>
+  <div class="end"><ng-content select="[fieldEnd]" /></div>
+</div>
+@if (error()) {
+  <p class="message error" [id]="controlId() + '-error'">{{ error() }}</p>
+} @else if (hint()) {
+  <p class="message" [id]="controlId() + '-hint'">{{ hint() }}</p>
+}

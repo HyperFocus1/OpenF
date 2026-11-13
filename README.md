@@ -1,59 +1,73 @@
 # OpenF
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.6.
+Frontend con Angular 22, renderizado en cliente (CSR), pnpm y Tailwind CSS. Incluye login, registro y sidebar; el área principal queda vacía.
 
-## Development server
+## Requisitos
 
-To start a local development server, run:
+- Node.js 24.15 o posterior dentro de la versión 24.
+- pnpm 11.25.
 
-```bash
-ng serve
+## Instalación
+
+Desde la carpeta del frontend:
+
+```sh
+pnpm install --frozen-lockfile
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Modos de ejecución
 
-## Code scaffolding
+| Comando | Modo | Salida |
+| --- | --- | --- |
+| `pnpm dev:api` | Backend local con cookies y CSRF | http://localhost:4200 |
+| `pnpm dev:mock` | Demo en memoria, sin backend ni llamadas API | http://localhost:4200 |
+| `pnpm build` | Producción con API | `dist/open-f/browser` |
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Ejecuta un modo de desarrollo a la vez, o cambia su puerto con `--port 4300`. `pnpm start` equivale a `pnpm dev:api`.
 
-```bash
-ng generate component component-name
+### Demo
+
+Acceso: **demo@openf.local / OpenF1234!**. También puedes registrar una cuenta. Las cuentas y la sesión de la demo se reinician al recargar la página.
+
+### Backend local
+
+Ejecuta el backend y su base de datos por separado. `proxy.conf.mjs` dirige `/api/**` a `http://localhost:8080/open_f/api/**` y permite usar las cookies bajo el mismo origen del frontend. Esta configuración se comparte en GitHub para reproducir el entorno de desarrollo.
+
+Puedes cambiar el destino mediante `OPENF_API_TARGET` y `OPENF_API_CONTEXT`. Ejemplo en PowerShell:
+
+```powershell
+$env:OPENF_API_TARGET = 'http://localhost:8080'
+$env:OPENF_API_CONTEXT = '/open_f/api'
+pnpm dev:api
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+El backend debe exponer `GET /api/session` y `POST /api/session/login`, `/api/session/register` y `/api/session/logout`. La sesión utiliza cookies; Angular envía el token de `OPENF-XSRF-TOKEN` en el encabezado `X-XSRF-TOKEN`.
 
-```bash
-ng generate --help
+### Producción
+
+Sirve `dist/open-f/browser` mediante HTTPS, usa `index.html` como fallback para las rutas de Angular y dirige `/api/**` al backend conservando cookies y sin cachear respuestas de sesión. La URL de API se configura en `src/app/config/environment.prod.ts`; `proxy.conf.mjs` solo se usa en desarrollo.
+
+El build descarga el CSS de DM Sans desde Google Fonts para incluirlo en producción.
+
+## Organización
+
+```text
+src/app/
+  config/          # Entornos, tokens y proveedores
+  core/            # Modelos, sesión, transportes, guards e interceptores
+  features/auth/   # Login y registro
+  shared/ui/       # Componentes del design system
+  layout/          # Sidebar y estructura
 ```
 
-## Building
+`Session` mantiene el estado mediante signals. Los proveedores HTTP y mock implementan el mismo contrato `SessionGateway`. Los botones reciben iconos y estados mediante propiedades.
 
-To build the project run:
+Tailwind CSS 4 controla la estructura, los espacios, la tipografía y la adaptación móvil de login, registro y sidebar. Los tokens del design system se conectan a Tailwind mediante `@theme inline` en `src/styles.css`. Los estilos base y de controles usan las capas `base` y `components`, de modo que las utilidades pueden ajustarlos sin aumentar la especificidad.
 
-```bash
-ng build
+## Pruebas
+
+```sh
+pnpm test:unit
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Para ejecutar las pruebas en modo observación: `pnpm test`. Para compilar los modos de desarrollo: `pnpm build:api` y `pnpm build:mock`.

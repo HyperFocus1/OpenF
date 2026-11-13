@@ -1,0 +1,6 @@
+<form class="prompt" [class.is-disabled]="disabled()" [attr.aria-label]="label()" [attr.aria-busy]="busy() || null" (submit)="submit($event)">
+  <of-icon-button [icon]="leadingIcon()" [label]="leadingLabel()" [disabled]="disabled() || busy()" (pressed)="leadingPressed.emit()" />
+  <input type="text" name="prompt" autocomplete="off" [attr.aria-label]="label()" [placeholder]="placeholder()" [value]="value()"
+    [disabled]="disabled()" [readOnly]="busy()" (input)="update($event)" />
+  <of-icon-button type="submit" [icon]="sendIcon()" [label]="sendLabel()" [busy]="busy()" [disabled]="disabled() || !value().trim()" />
+</form>

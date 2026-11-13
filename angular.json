@@ -2,7 +2,10 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "cli": {
-    "packageManager": "pnpm"
+    "packageManager": "pnpm",
+    "cache": {
+      "enabled": false
+    }
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -30,6 +33,9 @@
           },
           "configurations": {
             "production": {
+              "fileReplacements": [
+                { "replace": "src/app/config/environment.ts", "with": "src/app/config/environment.prod.ts" }
+              ],
               "budgets": [
                 {
                   "type": "initial",
@@ -48,6 +54,15 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "mock": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                { "replace": "src/app/config/environment.ts", "with": "src/app/config/environment.mock.ts" },
+                { "replace": "src/app/config/session.provider.ts", "with": "src/app/config/session.provider.mock.ts" }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -59,7 +74,11 @@
               "buildTarget": "open-f:build:production"
             },
             "development": {
-              "buildTarget": "open-f:build:development"
+              "buildTarget": "open-f:build:development",
+              "proxyConfig": "proxy.conf.mjs"
+            },
+            "mock": {
+              "buildTarget": "open-f:build:mock"
             }
           },
           "defaultConfiguration": "development"

@@ -1,1 +1,29 @@
-/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+@import "./styles/tokens.css";
+@import "./styles/base.css";
+
+@theme inline {
+  --font-sans: var(--of-font);
+  --color-canvas: var(--of-canvas);
+  --color-surface: var(--of-surface);
+  --color-surface-active: var(--of-surface-active);
+  --color-content: var(--of-text);
+  --color-content-muted: var(--of-text-muted);
+  --color-content-strong: var(--of-text-strong);
+  --color-outline-subtle: var(--of-outline-subtle);
+  --color-primary: var(--of-primary);
+  --color-on-primary: var(--of-on-primary);
+  --spacing-rail: var(--of-rail-width);
+  --color-focus: var(--of-focus);
+  --color-danger: var(--of-error);
+  --radius-control: var(--of-radius-sm);
+  --radius-panel: var(--of-radius-lg);
+}
+
+@custom-variant compact {
+  @media (max-width: 600px) { @slot; }
+}
+
+@custom-variant narrow {
+  @media (max-width: 360px) { @slot; }
+}

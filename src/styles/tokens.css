@@ -1,0 +1,40 @@
+:root {
+  color-scheme: dark;
+  --of-font: "DM Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --of-canvas: #000;
+  --of-surface-lowest: #0a0a0a;
+  --of-surface: #101012;
+  --of-surface-hover: #1b1b1e;
+  --of-surface-active: #28282b;
+  --of-text: #e4e2e5;
+  --of-text-strong: #fff;
+  --of-text-muted: #96969f;
+  --of-outline: #3a3d43;
+  --of-input-outline: #595c65;
+  --of-outline-subtle: #202023;
+  --of-primary: #fff;
+  --of-on-primary: #000;
+  --of-error: #ffb4ab;
+  --of-focus: #b3c5ff;
+  --of-space-1: 4px;
+  --of-space-2: 8px;
+  --of-space-3: 12px;
+  --of-space-4: 16px;
+  --of-space-5: 24px;
+  --of-space-6: 32px;
+  --of-space-7: 48px;
+  --of-radius-sm: 12px;
+  --of-radius-md: 20px;
+  --of-radius-lg: 32px;
+  --of-radius-pill: 999px;
+  --of-control-sm: 40px;
+  --of-control-md: 48px;
+  --of-control-lg: 56px;
+  --of-input-height: 64px;
+  --of-rail-width: 104px;
+  --of-transition: 160ms ease;
+}
+
+@media (max-width: 600px) {
+  :root { --of-rail-width: 80px; }
+}

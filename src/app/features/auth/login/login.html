@@ -1,0 +1,19 @@
+<of-auth-layout title="Iniciar sesión" subtitle="Qué bueno tenerte de vuelta.">
+  @if (serverError()) { <of-alert class="mb-5">{{ serverError() }}</of-alert> }
+  <form #formElement class="flex flex-col gap-4" novalidate (submit)="onSubmit($event)" (input)="serverError.set('')" [attr.aria-busy]="loginForm().submitting()">
+    <of-form-field label="Correo" controlId="login-email" [error]="emailError()">
+      <input id="login-email" ofInput type="email" placeholder=" " autocomplete="username" inputmode="email"
+        [formField]="loginForm.email" [ofInvalid]="!!emailError()" [attr.aria-describedby]="emailError() ? 'login-email-error' : null">
+    </of-form-field>
+    <of-form-field label="Contraseña" controlId="login-password" [error]="passwordError()">
+      <input id="login-password" ofInput [type]="showPassword() ? 'text' : 'password'" placeholder=" " autocomplete="current-password"
+        [formField]="loginForm.password" [ofInvalid]="!!passwordError()" [attr.aria-describedby]="passwordError() ? 'login-password-error' : null">
+      <of-icon-button fieldEnd [icon]="showPassword() ? 'eye-off' : 'eye'" [label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+        [toggle]="true" [active]="showPassword()" (pressed)="showPassword.update(value => !value)" />
+    </of-form-field>
+    <button ofButton="primary" size="lg" type="submit" class="mt-2 w-full" [busy]="loginForm().submitting()">
+      {{ loginForm().submitting() ? 'Entrando…' : 'Iniciar sesión' }}
+    </button>
+  </form>
+  <p class="mt-7 text-center text-[13px] leading-6 text-content-muted">¿Aún no tienes cuenta? <a routerLink="/register" class="of-text-link ml-[5px]">Crear cuenta</a></p>
+</of-auth-layout>

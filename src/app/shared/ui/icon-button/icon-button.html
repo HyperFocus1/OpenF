@@ -1,0 +1,11 @@
+<span class="icon-button-wrap" [class.tooltip-dismissed]="tooltipDismissed()" [attr.data-tooltip-placement]="tooltipPlacement()"
+  (mouseenter)="tooltipDismissed.set(false)" (focusin)="tooltipDismissed.set(false)" (keydown.escape)="tooltipDismissed.set(true)">
+  <button class="icon-button" [type]="type()" [class.active]="active()" [attr.aria-label]="label()"
+    [attr.aria-pressed]="toggle() ? active() : null" [attr.aria-current]="current() ? 'page' : null"
+    [attr.aria-disabled]="unavailable() || null" [attr.aria-busy]="busy() || null"
+    [disabled]="disabled() || busy()" [attr.popovertarget]="popoverTarget()"
+    [attr.aria-controls]="popoverTarget()" [attr.aria-expanded]="expanded()" (click)="activate($event)">
+    <of-icon [name]="icon()" />
+  </button>
+  @if (tooltip()) { <span class="tooltip" aria-hidden="true">{{ tooltip() }}</span> }
+</span>
