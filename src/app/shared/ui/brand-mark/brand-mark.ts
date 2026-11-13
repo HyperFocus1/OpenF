@@ -7,7 +7,7 @@ import { Component, input } from '@angular/core';
     '[class.brand-tile]': 'tile()',
     '[class.brand-compact]': 'compact()',
   },
-  styles: [':host{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;color:var(--of-text-strong)}svg{width:32px;height:32px}:host(.brand-tile){width:64px;height:64px;background:#fff;color:#000;border-radius:16px}:host(.brand-compact) svg{width:28px;height:28px}'],
+  styles: [':host{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;color:var(--of-text-strong)}svg{width:32px;height:32px}:host(.brand-tile){width:64px;height:64px;background:var(--of-text-strong);color:var(--of-canvas);border-radius:16px}:host(.brand-compact) svg{width:28px;height:28px}'],
 })
 export class BrandMark {
   readonly tile = input(false);

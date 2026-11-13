@@ -121,3 +121,22 @@ Catálogo de componentes y casos de uso, separado de `src/` y del build de la ap
 Antes de las pruebas de navegador, instala Chromium una vez: `pnpm exec playwright install chromium`. Las fuentes del catálogo son locales. No hace falta ejecutar Java.
 
 Configuración, historias y fixtures: `storybook/`. Pruebas: `tests/storybook/`. La salida `storybook-static/` se ignora en Git; la app sigue saliendo a `dist/open-f/browser/`. Tailwind escanea solo `src/app/` para la app; el catálogo añade sus propias fuentes de clases. Consulta [la guía del catálogo](storybook/README.md) para sus escenarios y para añadir historias.
+
+## Paleta menta
+
+Los tokens semánticos de `src/styles/tokens.css` definen la misma paleta para la app, Tailwind, los componentes y Storybook, incluidos hover, presión, foco, selección, errores y sombras.
+
+| Uso | Oscuro | Claro |
+| --- | --- | --- |
+| Fondo | #0A0A0C | #F7F8F5 |
+| Superficie | #19191C | #FFFFFF |
+| Texto | #F2F0EC | #202723 |
+| Texto secundario | #A2A29F | #626B65 |
+| Borde de control | #656563 | #838C85 |
+| Acción principal | #70D1A6 | #167550 |
+| Texto sobre acción | #081B13 | #FFFFFF |
+| Fondo seleccionado | #173529 | #E7F3EB |
+
+La app sigue la apariencia del sistema. Para fijar un tema, usa `data-theme="dark"` o `data-theme="light"` en `<html>` o en un contenedor del DS. Quita el atributo o usa `data-theme="system"` para volver a la preferencia del sistema. Los controles nativos comparten el mismo `color-scheme`; no hace falta duplicar componentes ni clases Tailwind por tema.
+
+En `pnpm storybook`, el selector de tema **Oscuro / Claro / Sistema** aplica la paleta completa al canvas y a los componentes. **Fundamentos → Design system → Colores** muestra también los tokens de estados. El catálogo arranca en oscuro. `pnpm storybook:test` verifica todas las historias y su accesibilidad en ambos temas, además del selector y los cambios de apariencia del sistema.

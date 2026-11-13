@@ -1,6 +1,6 @@
 # Catálogo OpenF
 
-Ejecuta `pnpm storybook` desde `web/` y abre http://localhost:6006. Usa Canvas para probar el componente, Controls para modificar sus propiedades, Actions para ver los eventos y Guía para consultar ejemplos. El selector de viewport permite revisar móvil, tablet y escritorio. El panel Accessibility ejecuta axe sobre cada ejemplo.
+Ejecuta `pnpm storybook` desde `web/` y abre http://localhost:6006. Usa Canvas para probar el componente, Controls para modificar sus propiedades, Actions para ver los eventos y Guía para consultar ejemplos. El selector de tema muestra Oscuro, Claro o Sistema según la selección; actualiza el canvas y los componentes reales, y mantiene la selección al navegar por las historias. El selector de viewport permite revisar móvil, tablet y escritorio. El panel Accessibility ejecuta axe sobre cada ejemplo.
 
 ## Casos de uso
 
@@ -18,7 +18,7 @@ Ejecuta `pnpm storybook` desde `web/` y abre http://localhost:6006. Usa Canvas p
 
 Las historias con `play` ejecutan un caso de uso y quedan en su estado final. Puedes repetirlo desde Interactions. En las historias de respuesta lenta, el botón permanece bloqueado 1,8 segundos y después completa la acción. Cambia el escenario en Controls o vuelve a la historia Empty para explorar manualmente. Cuenta demo: `demo@openf.local` / `OpenF1234!`.
 
-El hover, la presión y el foco se comprueban interactuando con los controles reales. No hay clases que simulen esos estados. El runner también usa hover y mouse-down nativos, teclado y movimiento reducido.
+El hover, la presión y el foco se comprueban interactuando con los controles reales. No hay clases que simulen esos estados. El runner revisa todas las historias con axe en ambos temas. También usa hover y mouse-down nativos, teclado y movimiento reducido, y comprueba el selector de tema y los cambios de apariencia del sistema.
 
 ## Estructura y aislamiento
 

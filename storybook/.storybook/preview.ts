@@ -3,6 +3,31 @@ import { themes } from 'storybook/theming';
 import { waitFor } from 'storybook/test';
 
 const preview: Preview = {
+  globalTypes: {
+    theme: {
+      description: 'Paleta menta del design system',
+      toolbar: {
+        title: 'Tema',
+        icon: 'circlehollow',
+        items: [
+          { value: 'dark', title: 'Oscuro' },
+          { value: 'light', title: 'Claro' },
+          { value: 'system', title: 'Sistema' },
+        ],
+      },
+    },
+  },
+  decorators: [
+    (story, context) => {
+      const theme: unknown = context.globals['theme'];
+      if (theme === 'light' || theme === 'dark') {
+        document.documentElement.dataset['theme'] = theme;
+      } else {
+        delete document.documentElement.dataset['theme'];
+      }
+      return story();
+    },
+  ],
   beforeEach: ({ canvasElement }) => {
     delete canvasElement.dataset['catalogReady'];
   },
@@ -20,12 +45,7 @@ const preview: Preview = {
     layout: 'centered',
     controls: { expanded: true },
     docs: { theme: themes.dark, story: { inline: false, height: '400px' } },
-    backgrounds: {
-      options: {
-        canvas: { name: 'Canvas', value: '#000000' },
-        surface: { name: 'Surface', value: '#101012' },
-      },
-    },
+    backgrounds: { disable: true },
     viewport: {
       options: {
         mobile: { name: 'Móvil · 360', styles: { width: '360px', height: '800px' } },
@@ -39,6 +59,6 @@ const preview: Preview = {
     },
     options: { storySort: { order: ['Fundamentos', 'UI', 'Layout', 'Auth', 'Vistas'] } },
   },
-  initialGlobals: { backgrounds: { value: 'canvas' } },
+  initialGlobals: { theme: 'dark' },
 };
 export default preview;

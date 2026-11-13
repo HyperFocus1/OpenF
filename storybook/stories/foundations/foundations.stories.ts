@@ -9,7 +9,7 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          'Tokens y componentes importados del design system de OpenF. El catálogo hereda DM Sans, colores y medidas de la app; no mantiene un tema paralelo.',
+          'Tokens y componentes importados del design system de OpenF. El catálogo hereda DM Sans, colores y medidas de la app. Usa Tema para cambiar entre Menta oscuro, claro y sistema.',
       },
     },
   },
@@ -28,8 +28,15 @@ export const Colors: Story = {
         ['Muted', '--of-text-muted'],
         ['Outline', '--of-outline'],
         ['Primary', '--of-primary'],
+        ['On primary', '--of-on-primary'],
+        ['Primary hover', '--of-primary-hover'],
+        ['Primary pressed', '--of-primary-pressed'],
+        ['Selected', '--of-selected-background'],
+        ['Selected text', '--of-selected-text'],
+        ['Control border', '--of-input-outline'],
         ['Focus', '--of-focus'],
         ['Error', '--of-error'],
+        ['Error background', '--of-error-background'],
       ],
     },
     template: `<div class="openf-storybook-frame"><h1 class="mb-6 text-2xl tracking-[0.123em]">Colores</h1><div class="openf-storybook-grid">@for (color of colors; track color[1]) {<div class="openf-storybook-card"><div class="openf-storybook-swatch" [style.background]="'var(' + color[1] + ')'"></div><strong>{{ color[0] }}</strong><code class="openf-storybook-caption">{{ color[1] }}</code></div>}</div></div>`,

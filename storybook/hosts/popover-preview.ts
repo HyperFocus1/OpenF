@@ -17,7 +17,7 @@ import { Button, Popover } from '@shared/ui';
       <p class="mt-2 text-sm">demo@openf.local</p>
       <button
         ofButton="ghost"
-        class="mt-4 text-inherit [--of-state-color:#000]"
+        class="mt-4 text-inherit"
         popovertarget="book-account"
         popovertargetaction="hide"
       >

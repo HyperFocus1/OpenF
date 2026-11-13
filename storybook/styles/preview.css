@@ -31,7 +31,7 @@
 .openf-storybook-swatch {
   width: 100%;
   height: 64px;
-  border: 1px solid #595c65;
+  border: 1px solid var(--of-input-outline);
   border-radius: 12px;
 }
 .openf-storybook-caption {
@@ -47,6 +47,7 @@
   display: block;
   width: min(600px, calc(100vw - 48px));
 }
-.sb-show-main.sb-main-fullscreen {
+.sb-show-main {
   background: var(--of-canvas);
+  color: var(--of-text);
 }

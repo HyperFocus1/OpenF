@@ -16,17 +16,17 @@
 <of-popover popoverId="account-menu" label="Opciones de cuenta" (toggled)="menuOpen.set($event)">
   <h2 class="mx-2 mb-5 text-2xl leading-normal font-medium tracking-[-0.7px]">Opciones</h2>
   <div class="flex items-center gap-3 p-2">
-    <span class="flex size-9 flex-none items-center justify-center rounded-full bg-black/8"><of-icon name="user" /></span>
+    <span class="flex size-9 flex-none items-center justify-center rounded-full bg-surface-active"><of-icon name="user" /></span>
     <div class="flex min-w-0 flex-col gap-0.5">
       <strong class="overflow-hidden text-[13px] font-semibold text-ellipsis">{{ session.user()?.name }}</strong>
-      <span class="truncate text-[11px] text-[#3b3b40]">{{ session.user()?.email }}</span>
+      <span class="truncate text-[11px] text-content-muted">{{ session.user()?.email }}</span>
     </div>
   </div>
-  <div class="mx-2 mt-3 mb-2 h-px bg-black/12"></div>
+  <div class="mx-2 mt-3 mb-2 h-px bg-outline-subtle"></div>
   <button ofButton="ghost" icon="logout" type="button"
-    class="flex min-h-12 w-full items-center justify-start gap-3 rounded-control border-0 bg-transparent p-3 text-left text-[13px] font-normal text-inherit [--of-state-color:#000] focus-visible:outline-[#25254d]"
+    class="flex min-h-12 w-full items-center justify-start gap-3 rounded-control border-0 bg-transparent p-3 text-left text-[13px] font-normal text-inherit focus-visible:outline-focus"
     [busy]="signingOut()" (click)="logout()">
     <span>{{ signingOut() ? 'Cerrando sesión…' : 'Cerrar sesión' }}</span>
   </button>
-  @if (error()) { <p class="px-3 py-2 text-xs leading-normal text-[#691c13]" role="alert">{{ error() }}</p> }
+  @if (error()) { <p class="px-3 py-2 text-xs leading-normal text-danger" role="alert">{{ error() }}</p> }
 </of-popover>

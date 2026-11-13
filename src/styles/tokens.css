@@ -1,22 +1,35 @@
 :root {
-  color-scheme: dark;
+  color-scheme: light dark;
   --of-font: "DM Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --of-canvas: #000;
-  --of-surface-lowest: #0a0a0a;
-  --of-surface: #101012;
-  --of-surface-hover: #1b1b1e;
-  --of-surface-active: #28282b;
-  --of-text: #e4e2e5;
-  --of-text-strong: #fff;
-  --of-text-muted: #96969f;
-  --of-icon-muted: #7e8088;
-  --of-outline: #3a3d43;
-  --of-input-outline: #595c65;
-  --of-outline-subtle: #202023;
-  --of-primary: #fff;
-  --of-on-primary: #000;
-  --of-error: #ffb4ab;
-  --of-focus: #b3c5ff;
+
+  /* Menta: light-dark(claro, oscuro). Components consume semantic tokens. */
+  --of-canvas: light-dark(#f7f8f5, #0a0a0c);
+  --of-surface-lowest: light-dark(#f0f2ee, #111113);
+  --of-surface: light-dark(#ffffff, #19191c);
+  --of-surface-hover: light-dark(#f0f4f0, #242429);
+  --of-surface-active: light-dark(#e8ede8, #29292c);
+  --of-surface-elevated: light-dark(#ffffff, #19191c);
+  --of-text: light-dark(#202723, #f2f0ec);
+  --of-text-strong: var(--of-text);
+  --of-text-muted: light-dark(#626b65, #a2a29f);
+  --of-icon-muted: light-dark(#626b65, #969894);
+  --of-outline: light-dark(#b6beb7, #444447);
+  --of-input-outline: light-dark(#838c85, #656563);
+  --of-outline-subtle: light-dark(#dce2dc, #29292c);
+  --of-primary: light-dark(#167550, #70d1a6);
+  --of-on-primary: light-dark(#ffffff, #081b13);
+  --of-primary-hover: light-dark(#126442, #8addb9);
+  --of-primary-pressed: light-dark(#0d5336, #5ebf94);
+  --of-selected-background: light-dark(#e7f3eb, #173529);
+  --of-selected-text: light-dark(#167550, #8de1bb);
+  --of-focus: light-dark(#167550, #8de1bb);
+  --of-focus-ring: color-mix(in srgb, var(--of-focus) 16%, transparent);
+  --of-error: light-dark(#9b3546, #e5a7ae);
+  --of-error-background: light-dark(#fbecef, #332225);
+  --of-error-outline: light-dark(#b45e6d, #956570);
+  --of-input-outline-hover: light-dark(#626b65, #969894);
+  --of-primary-shadow: 0 0 0 .5px color-mix(in srgb, var(--of-primary) 20%, transparent), 0 1px 3px light-dark(rgb(32 39 35 / 12%), rgb(0 0 0 / 18%));
+  --of-popover-shadow: 0 16px 64px light-dark(rgb(32 39 35 / 14%), rgb(0 0 0 / 48%));
   --of-space-1: 4px;
   --of-space-2: 8px;
   --of-space-3: 12px;
@@ -35,6 +48,11 @@
   --of-rail-width: 104px;
   --of-transition: 160ms ease;
 }
+
+/* Omit data-theme (or use system) to follow the operating system. */
+[data-theme="light"] { color-scheme: light; }
+[data-theme="dark"] { color-scheme: dark; }
+[data-theme="system"] { color-scheme: light dark; }
 
 @media (max-width: 600px) {
   :root { --of-rail-width: 80px; }
