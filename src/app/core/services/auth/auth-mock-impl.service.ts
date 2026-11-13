@@ -1,19 +1,19 @@
 import { Injectable } from '@angular/core';
-import { LoginRequest, RegisterRequest, SessionFailure, SessionUser } from '../models/session';
-import { SessionGateway } from './session-gateway';
+import { LoginRequest, RegisterRequest, SessionFailure, SessionUser } from '@models/auth/auth.model';
+import { AuthService } from './auth.service';
 
 interface DemoAccount { user: SessionUser; password: string; }
 
 /** Ephemeral demo only. No HTTP, cookies, tokens or browser storage. Reload resets it. */
 @Injectable()
-export class MockSessionGateway implements SessionGateway {
+export class AuthMockServiceImpl implements AuthService {
   private readonly accounts: DemoAccount[] = [{
     user: { id: 1, email: 'demo@openf.local', name: 'Demo', lastName: 'OpenF' },
     password: 'OpenF1234!',
   }];
   private currentUser: SessionUser | null = null;
 
-  async read(): Promise<SessionUser | null> {
+  async restoreSession(): Promise<SessionUser | null> {
     return this.currentUser ? { ...this.currentUser } : null;
   }
 

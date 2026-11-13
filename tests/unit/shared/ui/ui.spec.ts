@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { ActionGroup, Button, IconButton, IconName, PromptInput } from './index';
+import { ActionGroup, Button, IconButton, IconName, PromptInput } from '@shared/ui';
 
 @Component({
   imports: [ActionGroup, Button, IconButton, PromptInput],

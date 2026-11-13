@@ -34,7 +34,10 @@
           "configurations": {
             "production": {
               "fileReplacements": [
-                { "replace": "src/app/config/environment.ts", "with": "src/app/config/environment.prod.ts" }
+                {
+                  "replace": "src/app/config/environment.ts",
+                  "with": "src/app/config/environment.prod.ts"
+                }
               ],
               "budgets": [
                 {
@@ -60,8 +63,14 @@
               "extractLicenses": false,
               "sourceMap": true,
               "fileReplacements": [
-                { "replace": "src/app/config/environment.ts", "with": "src/app/config/environment.mock.ts" },
-                { "replace": "src/app/config/session.provider.ts", "with": "src/app/config/session.provider.mock.ts" }
+                {
+                  "replace": "src/app/config/environment.ts",
+                  "with": "src/app/config/environment.mock.ts"
+                },
+                {
+                  "replace": "src/app/config/auth.providers.ts",
+                  "with": "src/app/config/auth.providers.mock.ts"
+                }
               ]
             }
           },
@@ -84,7 +93,13 @@
           "defaultConfiguration": "development"
         },
         "test": {
-          "builder": "@angular/build:unit-test"
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "tsconfig.spec.json",
+            "include": [
+              "../tests/unit/**/*.spec.ts"
+            ]
+          }
         }
       }
     }

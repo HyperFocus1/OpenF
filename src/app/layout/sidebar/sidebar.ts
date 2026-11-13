@@ -1,9 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { Session } from '../../core/services/session';
-import { authError } from '../../core/auth/auth-error';
-import { Button, Icon, IconButton, IconName } from '../../shared/ui';
-import { Popover } from '../../shared/ui/popover/popover';
+import { SessionService } from '@core/services/auth/session.service';
+import { authError } from '@shared/utils/auth-error';
+import { Button, Icon, IconButton, IconName } from '@shared/ui';
+import { Popover } from '@shared/ui/popover/popover';
 
 interface NavigationItem { label: string; icon: IconName; active: boolean; }
 
@@ -14,7 +14,7 @@ interface NavigationItem { label: string; icon: IconName; active: boolean; }
   host: { class: 'block' },
 })
 export class Sidebar {
-  protected readonly session = inject(Session);
+  protected readonly session = inject(SessionService);
   private readonly router = inject(Router);
   protected readonly menuOpen = signal(false);
   protected readonly signingOut = signal(false);

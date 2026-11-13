@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { BrandMark } from '../../shared/ui';
+import { BrandMark } from '@shared/ui';
 
 @Component({
   selector: 'of-auth-layout',

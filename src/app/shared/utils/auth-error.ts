@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { SessionFailure } from '../models/session';
+import { SessionFailure } from '@models/auth/auth.model';
 
 export function authError(error: unknown): string {
   if (error instanceof SessionFailure) {

@@ -1,10 +1,10 @@
 import { Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { email, form, FormField as SignalField, required, submit } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
-import { Session } from '../../../core/services/session';
-import { authError } from '../../../core/auth/auth-error';
-import { Alert, Button, FormField, IconButton, Input } from '../../../shared/ui';
-import { AuthLayout } from '../auth-layout';
+import { SessionService } from '@core/services/auth/session.service';
+import { authError } from '@shared/utils/auth-error';
+import { Alert, Button, FormField, IconButton, Input } from '@shared/ui';
+import { AuthLayout } from '../../auth-layout';
 
 @Component({
   selector: 'of-login',
@@ -12,7 +12,7 @@ import { AuthLayout } from '../auth-layout';
   templateUrl: './login.html',
 })
 export class Login {
-  private readonly session = inject(Session);
+  private readonly session = inject(SessionService);
   private readonly router = inject(Router);
   private readonly formElement = viewChild.required<ElementRef<HTMLFormElement>>('formElement');
   protected readonly model = signal({ email: '', password: '' });

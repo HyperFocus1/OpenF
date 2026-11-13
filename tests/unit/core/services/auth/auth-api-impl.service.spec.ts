@@ -1,28 +1,25 @@
-import { HttpClient, HttpErrorResponse, provideHttpClient, withInterceptors, withXsrfConfiguration } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import { API_URL, SESSION_GATEWAY } from '../../config/tokens';
-import { sessionInterceptor } from '../interceptors/session-interceptor';
-import { Session } from './session';
-import { HttpSessionGateway } from './http-session-gateway';
+import { API_URL } from '@configs/tokens';
+import { provideAuth } from '@configs/auth.providers';
+import { SessionService } from '@core/services/auth/session.service';
 
 describe('Sesión HTTP con cookies', () => {
   const user = { id: 1, email: 'persona@example.test', name: 'Persona', lastName: 'Prueba' };
-  let session: Session;
+  let session: SessionService;
   let http: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({ providers: [
       provideRouter([]),
-      provideHttpClient(withXsrfConfiguration({ cookieName: 'OPENF-XSRF-TOKEN', headerName: 'X-XSRF-TOKEN' }),
-        withInterceptors([sessionInterceptor])),
+      provideAuth(),
       provideHttpClientTesting(),
       { provide: API_URL, useValue: '/api' },
-      { provide: SESSION_GATEWAY, useClass: HttpSessionGateway },
     ] });
-    session = TestBed.inject(Session);
+    session = TestBed.inject(SessionService);
     http = TestBed.inject(HttpTestingController);
     document.cookie = 'OPENF-XSRF-TOKEN=csrf-test; Path=/';
   });
