@@ -255,3 +255,30 @@ test('el shell cabe en móvil y el desplazamiento horizontal queda dentro de las
   await expect(panel).toBeVisible();
   expect(Math.round((await panel.boundingBox())!.width)).toBeLessThanOrEqual(360);
 });
+
+test('el skeleton inicial cabe en móvil, respeta movimiento reducido y conserva las pestañas vacías', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 360, height: 800 });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/iframe.html?id=vistas-kanban--loading&viewMode=story&globals=theme:dark');
+  const loading = page.locator('of-kanban-loading');
+  await expect(loading).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Tasks', exact: true })).toBeVisible();
+  await expect(page.getByRole('tabpanel')).toHaveAttribute('aria-busy', 'true');
+  expect(
+    await loading
+      .locator('.motion-safe\\:animate-pulse')
+      .evaluate((node) => getComputedStyle(node).animationName),
+  ).toBe('none');
+  const widths = await page.evaluate(() => ({
+    content: document.documentElement.scrollWidth,
+    viewport: innerWidth,
+  }));
+  expect(widths.content).toBeLessThanOrEqual(widths.viewport);
+  await page.getByRole('tab', { name: 'Lista', exact: true }).click();
+  await expect(loading).toHaveCount(0);
+  await expect(page.getByRole('tabpanel')).toBeEmpty();
+  await page.getByRole('tab', { name: 'Tablero', exact: true }).click();
+  await expect(loading).toBeVisible();
+});

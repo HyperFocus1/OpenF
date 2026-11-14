@@ -3,16 +3,27 @@ import { firstValueFrom, Subject } from 'rxjs';
 import { KANBAN_SERVICE_TOKEN } from '@configs/tokens';
 import { KanbanSnapshot } from '@models/kanban/kanban.model';
 import { KanbanMockServiceImpl } from '@core/services/kanban/kanban-mock-impl.service';
+import { KanbanStateService } from '@core/services/kanban/kanban-state.service';
 import { KanbanPage } from '@features/kanban/kanban-page';
+
+function pendingPage() {
+  const request = new Subject<KanbanSnapshot>();
+  const readBoard = vi.fn(() => request.asObservable());
+  TestBed.overrideComponent(KanbanPage, {
+    set: {
+      providers: [KanbanStateService, { provide: KANBAN_SERVICE_TOKEN, useValue: { readBoard } }],
+    },
+  });
+  const fixture = TestBed.createComponent(KanbanPage);
+  fixture.detectChanges();
+  expect(readBoard).toHaveBeenCalledTimes(1);
+  return { request, fixture, root: fixture.nativeElement as HTMLElement };
+}
 
 describe('Kanban: carga inicial', () => {
   it('muestra placeholders hasta recibir datos y conserva el encabezado y el foco al terminar', async () => {
     const data = await firstValueFrom(new KanbanMockServiceImpl().readBoard());
-    const request = new Subject<KanbanSnapshot>();
-    TestBed.overrideProvider(KANBAN_SERVICE_TOKEN, { useValue: { readBoard: () => request } });
-    const fixture = TestBed.createComponent(KanbanPage);
-    fixture.detectChanges();
-    const root = fixture.nativeElement as HTMLElement;
+    const { request, fixture, root } = pendingPage();
     const header = root.querySelector('header');
     const boardTab = root.querySelector<HTMLButtonElement>('#kanban-panel-tab-board')!;
     expect(root.querySelector('h1')?.textContent).toBe('Tasks');
@@ -34,11 +45,7 @@ describe('Kanban: carga inicial', () => {
   });
 
   it('permite cambiar de pestaña durante la carga y sustituye el skeleton por el error al fallar', () => {
-    const request = new Subject<KanbanSnapshot>();
-    TestBed.overrideProvider(KANBAN_SERVICE_TOKEN, { useValue: { readBoard: () => request } });
-    const fixture = TestBed.createComponent(KanbanPage);
-    fixture.detectChanges();
-    const root = fixture.nativeElement as HTMLElement;
+    const { request, fixture, root } = pendingPage();
     root.querySelector<HTMLButtonElement>('#kanban-panel-tab-list')!.click();
     fixture.detectChanges();
     expect(root.querySelector('of-kanban-loading')).toBeNull();
