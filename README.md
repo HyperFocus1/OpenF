@@ -27,7 +27,15 @@ Ejecuta un modo de desarrollo a la vez, o cambia su puerto con `--port 4300`. `p
 
 ### Vistas
 
-Después de acceder, `/app` redirige a `/app/home`. Las rutas `/app/home`, `/app/kanban` y `/app/tree` muestran únicamente `Hi from Home`, `Hi from Kanban` y `Hi from Tree`. El sidebar obtiene la selección de la URL, incluso al volver atrás o entrar mediante un enlace directo.
+Después de acceder, `/app` redirige a `/app/home`. Home y Tree mantienen sus vistas iniciales. `/app/kanban` muestra el tablero con datos locales; Lista y Roadmap conservan paneles vacíos. El sidebar obtiene la selección de la URL, incluso al volver atrás o entrar mediante un enlace directo.
+
+El Kanban permite buscar, filtrar por prioridad y responsable, ordenar, crear tareas, moverlas con CDK DragDrop y abrir su detalle. El detalle incluye estado, prioridad, responsables, presupuesto, áreas, contacto, herramientas, archivos TXT descargables, guardados y comentarios. Los cambios viven en signals y se reinician al recargar; el contrato `KanbanService` se resuelve mediante `KANBAN_SERVICE_TOKEN` a `KanbanMockServiceImpl`, sin llamadas API. `KanbanStateService` encapsula el estado, los filtros y los resúmenes. Los datos de ejemplo son constantes privadas de `KanbanMockServiceImpl`; los componentes reciben valores y emiten eventos. Consulta [la arquitectura y las fuentes verificadas](docs/kanban.md).
+
+La estructura visual y responsive usa Tailwind y los tokens de la paleta menta. `Drawer` usa CDK Overlay y TemplatePortal, con bloqueo del scroll, contención del foco y cierre mediante Escape o clic fuera. `Dropdown` usa CdkConnectedOverlay para los filtros. `Badge`, `Avatar`, `Tabs`, `Drawer` y `Dropdown` son componentes reutilizables del DS con historias propias; las historias de `Vistas/Kanban` cubren las cuatro subsecciones, el detalle y la búsqueda vacía.
+
+`KanbanPage` conecta el servicio con `Kanban`, que solo declara un input de vista y un output de acciones. Los servicios preparan la agrupación, los catálogos, los formularios y el resumen. La respuesta mock incluye las columnas y sus IDs, nombres, orden y metadatos, además de las prioridades, categorías y herramientas; la vista admite otra cantidad de columnas, incluidas las vacías. Este contrato conserva los atributos de la UI de referencia y amplía el modelo revisado en `D:/Dev/JavaOpenF`, cuyo backend todavía expone un subconjunto de esas propiedades.
+
+Los métodos del mock devuelven Observables con 400 ms de demora por operación. El servicio de estado gestiona suscripciones cancelables y signals de carga, guardado y error. La UI muestra la carga inicial, bloquea envíos duplicados al guardar y permite reintentar cuando falla la lectura. Los datos de ejemplo están en constantes privadas de `KanbanMockServiceImpl`.
 
 ### Demo
 

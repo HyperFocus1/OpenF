@@ -1,0 +1,291 @@
+<header class="flex items-center justify-between px-3 pt-2 pb-1 [--of-icon-size:14px]">
+  <button
+    type="button"
+    class="flex size-7 items-center justify-center rounded-md border-0 bg-transparent text-content-muted hover:bg-surface-hover hover:text-content"
+    [attr.aria-label]="expanded() ? 'Reducir detalle' : 'Ampliar detalle'"
+    [attr.aria-pressed]="expanded()"
+    (click)="expanded.set(!expanded())"
+  >
+    <of-icon [name]="expanded() ? 'collapse' : 'expand'" />
+  </button>
+  <div class="flex items-center gap-0.5">
+    <of-dropdown
+      label="Opciones de tarea"
+      panelId="task-options"
+      icon="more"
+      [iconOnly]="true"
+      scheme="dark"
+    >
+      <div class="flex flex-col gap-1">
+        <button
+          type="button"
+          class="flex items-center gap-2 rounded-md border-0 bg-transparent px-2 py-2 text-left text-xs hover:bg-surface-hover"
+          [disabled]="busy()"
+          [attr.aria-label]="task().bookmarked ? 'Quitar de guardados' : 'Guardar tarea'"
+          [attr.aria-pressed]="task().bookmarked"
+          (click)="changed.emit({ bookmarked: !task().bookmarked })"
+        >
+          <of-icon name="bookmark" />{{
+            task().bookmarked ? 'Quitar de guardados' : 'Guardar tarea'
+          }}
+        </button>
+        @if (task().completionChanges; as changes) {
+          <button
+            type="button"
+            class="flex items-center gap-2 rounded-md border-0 bg-transparent px-2 py-2 text-left text-xs hover:bg-surface-hover"
+            [disabled]="busy()"
+            (click)="changed.emit(changes)"
+          >
+            <of-icon name="check-circle" />{{ task().completionLabel }}
+          </button>
+        }
+      </div>
+    </of-dropdown>
+    <button
+      type="button"
+      aria-label="Ver actividad"
+      class="flex size-7 items-center justify-center rounded-md border-0 bg-transparent text-content-muted hover:bg-surface-hover hover:text-content"
+      (click)="activeTab.set('activity')"
+    >
+      <of-icon name="clock" />
+    </button>
+    <button
+      type="button"
+      aria-label="Escribir comentario"
+      class="flex size-7 items-center justify-center rounded-md border-0 bg-transparent text-content-muted hover:bg-surface-hover hover:text-content"
+      (click)="focusComposer()"
+    >
+      <of-icon name="pen" />
+    </button>
+    <button
+      type="button"
+      aria-label="Cerrar panel"
+      cdkFocusInitial
+      class="flex size-7 items-center justify-center rounded-md border-0 bg-transparent text-content-muted hover:bg-surface-hover hover:text-content"
+      (click)="closed.emit()"
+    >
+      <of-icon name="close" />
+    </button>
+  </div>
+</header>
+@if (error()) {
+  <of-alert class="mx-4 my-2">{{ error() }}</of-alert>
+}
+<div class="px-4 pt-2 pb-5">
+  <h2 class="text-[15px] leading-[22px] font-medium text-pretty">{{ task().title }}</h2>
+  <fieldset
+    class="m-0 mt-5 min-w-0 border-0 p-0"
+    [disabled]="busy()"
+    [attr.aria-busy]="busy() || null"
+  >
+    <legend class="of-sr-only">Atributos de la tarea</legend>
+    <dl
+      class="m-0 flex flex-col gap-3.5 text-[11px] [&>div]:grid [&>div]:grid-cols-[82px_minmax(0,1fr)] [&>div]:items-center [&>div]:gap-2 [&_dt]:text-content-muted [&_dd]:m-0 [&_dd]:flex [&_dd]:min-w-0 [&_dd]:flex-wrap [&_dd]:items-center [&_dd]:gap-2 [&_select]:w-full [&_select]:min-w-0 [&_select]:cursor-pointer [&_select]:appearance-none [&_select]:border-0 [&_select]:bg-transparent [&_select]:p-0 [&_select]:py-0.5 [&_select]:text-[11px] [&_select]:text-content [&_option]:bg-surface [--of-icon-size:13px]"
+    >
+      <div>
+        <dt>Responsables</dt>
+        <dd>
+          @for (person of task().assignees; track person.name) {
+            <span class="inline-flex items-center gap-1.5"
+              ><of-avatar [name]="person.name" [src]="person.avatarUrl" size="xs" />{{
+                person.name
+              }}</span
+            >
+          }
+        </dd>
+      </div>
+      <div>
+        <dt><label for="task-status">Estado</label></dt>
+        <dd>
+          <of-icon [name]="task().column.icon" class="text-primary" />
+          <select
+            #statusSelect
+            id="task-status"
+            [value]="task().columnId"
+            (change)="setStatus(statusSelect.value)"
+            class="flex-1"
+          >
+            @for (column of columns(); track column.id) {
+              <option [value]="column.id" [selected]="task().columnId === column.id">
+                {{ column.label }}
+              </option>
+            }
+          </select>
+        </dd>
+      </div>
+      <div>
+        <dt>Vencimiento</dt>
+        <dd><of-icon name="calendar" />{{ task().due }} {{ year() }}</dd>
+      </div>
+      <div>
+        <dt><label for="task-priority">Prioridad</label></dt>
+        <dd>
+          <of-icon name="chart" [class.text-danger]="task().priority.tone === 'danger'" />
+          <select
+            #prioritySelect
+            id="task-priority"
+            [value]="task().priority.id"
+            (change)="setPriority(prioritySelect.value)"
+            class="flex-1"
+          >
+            @for (item of priorities(); track item.id) {
+              <option [value]="item.id" [selected]="task().priority.id === item.id">
+                {{ item.shortLabel ?? item.label }}
+              </option>
+            }
+          </select>
+        </dd>
+      </div>
+      <div>
+        <dt>Etiquetas</dt>
+        <dd>
+          @for (tag of task().tags; track tag.id) {
+            <of-tag [color]="tag.color">{{ tag.label }}</of-tag>
+          }
+        </dd>
+      </div>
+    </dl>
+  </fieldset>
+</div>
+<of-tabs
+  variant="underline"
+  class="w-full px-2"
+  label="Contenido de la tarea"
+  panelId="task-detail-panel"
+  [options]="task().detailTabs"
+  [(value)]="activeTab"
+/>
+<div
+  id="task-detail-panel"
+  role="tabpanel"
+  [attr.aria-labelledby]="'task-detail-panel-tab-' + activeTab()"
+  [attr.tabindex]="activeTab() === 'description' || activeTab() === 'activity' ? 0 : null"
+  class="min-w-0 flex-1 bg-surface-lowest"
+>
+  @switch (activeTab()) {
+    @case ('comments') {
+      <section aria-label="Comentarios de la tarea" class="px-4 pt-4 pb-5">
+        <form
+          class="relative rounded-md border border-outline-subtle bg-surface-hover p-2"
+          (submit)="addComment($event)"
+        >
+          <label for="task-comment" class="of-sr-only">Escribir un comentario</label>
+          <textarea
+            #commentInput
+            id="task-comment"
+            rows="2"
+            placeholder="Comparte una idea o una actualización…"
+            class="h-14 w-full resize-none border-0 bg-transparent p-0.5 pb-7 text-[11px] leading-5 text-content placeholder:text-content-muted"
+            [formField]="commentForm.text"
+          ></textarea>
+          <button
+            type="submit"
+            class="absolute right-2 bottom-2 min-h-6 rounded border-0 bg-primary px-3 py-1 text-[10px] font-medium text-on-primary hover:brightness-110 disabled:cursor-default disabled:opacity-50"
+            [disabled]="commentForm().invalid() || busy()"
+            [attr.aria-busy]="busy() || null"
+          >
+            {{ busy() ? 'Enviando…' : 'Comentar' }}
+          </button>
+        </form>
+        <div class="mt-5 flex flex-col gap-5" aria-live="polite">
+          @for (item of task().comments; track item.id) {
+            <article>
+              <header class="flex items-center gap-1.5 text-[11px]">
+                <of-avatar [name]="item.author" [src]="item.avatarUrl" size="xs" />
+                <span>{{ item.author }}</span><span class="ml-1 text-[9px] text-content-muted">{{
+                  item.date
+                }}</span>
+              </header>
+              <p class="mt-1.5 text-[11px] leading-[18px] wrap-anywhere text-content-muted">
+                {{ item.text }}
+              </p>
+              <div class="mt-1.5 flex items-center gap-1.5 text-[9px] [--of-icon-size:11px]">
+                @for (reaction of item.reactions; track reaction.emoji) {
+                  <button
+                    type="button"
+                    class="flex min-h-5 items-center gap-1 rounded-full border border-outline-subtle px-1.5 text-content"
+                    [class]="reaction.reacted ? 'bg-selected' : 'bg-surface-active'"
+                    [disabled]="busy()"
+                    [attr.aria-pressed]="reaction.reacted"
+                    [attr.aria-label]="
+                      'Reaccionar con ' + reaction.emoji + ' al comentario de ' + item.author
+                    "
+                    (click)="reacted.emit({ commentId: item.id, emoji: reaction.emoji })"
+                  >
+                    {{ reaction.emoji }}<span>{{ reaction.count }}</span>
+                  </button>
+                }
+                <button
+                  type="button"
+                  class="flex h-5 min-w-6 items-center justify-center rounded-full border-0 bg-surface-active px-1 text-content-muted hover:text-content"
+                  [disabled]="busy()"
+                  [attr.aria-label]="'Me gusta al comentario de ' + item.author"
+                  (click)="reacted.emit({ commentId: item.id, emoji: '👍' })"
+                >
+                  <of-icon name="smile" />
+                </button>
+                <button
+                  type="button"
+                  class="inline-flex min-h-5 items-center gap-1 border-0 bg-transparent px-1 text-content-muted hover:text-content"
+                  [disabled]="busy()"
+                  [attr.aria-label]="'Responder a ' + item.author"
+                  (click)="reply(item)"
+                >
+                  Responder
+                </button>
+              </div>
+            </article>
+          } @empty {
+            <p class="text-xs text-content-muted">Inicia la conversación con tu equipo.</p>
+          }
+        </div>
+      </section>
+    }
+    @case ('description') {
+      <section aria-label="Descripción de la tarea" class="px-4 py-5">
+        <p class="text-xs leading-6 whitespace-pre-line text-content-muted">
+          {{ task().description }}
+        </p>
+      </section>
+    }
+    @case ('attachments') {
+      <section aria-label="Archivos de la tarea" class="flex flex-col gap-2 px-4 py-4">
+        @for (file of task().files; track file.id) {
+          <button
+            type="button"
+            class="flex items-center gap-3 rounded-md border border-outline-subtle bg-surface p-3 text-left text-content hover:bg-surface-hover [--of-icon-size:16px]"
+            [attr.aria-label]="'Descargar ' + file.name"
+            (click)="downloaded.emit(file)"
+          >
+            <of-icon name="file" class="text-primary" /><span class="min-w-0 flex-1"
+              ><span class="block text-[11px]">{{ file.name }}</span
+              ><span class="mt-1 block text-[10px] text-content-muted"
+                >{{ file.date }} · TXT</span
+              ></span
+            ><of-icon name="download" />
+          </button>
+        } @empty {
+          <p class="text-xs text-content-muted">Aún no hay archivos adjuntos.</p>
+        }
+      </section>
+    }
+    @case ('activity') {
+      <section aria-label="Actividad de la tarea" class="flex flex-col gap-5 px-4 py-5">
+        @for (item of task().activity; track item.id) {
+          <article class="flex items-start gap-2">
+            <of-avatar [name]="item.author" [src]="item.avatarUrl" size="xs" />
+            <div>
+              <p class="text-[11px] leading-[18px]">
+                <span>{{ item.author }}</span>
+                <span class="text-content-muted">{{ item.text }}</span>
+              </p>
+              <p class="mt-1 text-[9px] text-content-muted">{{ item.date }}</p>
+            </div>
+          </article>
+        } @empty {
+          <p class="text-xs text-content-muted">Aún no hay actividad.</p>
+        }
+      </section>
+    }
+  }
+</div>

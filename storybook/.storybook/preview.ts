@@ -34,6 +34,9 @@ const preview: Preview = {
   afterEach: async ({ canvasElement }) => {
     await waitFor(
       () => {
+        const kanban = canvasElement.querySelector('of-kanban-page');
+        if (kanban && !kanban.querySelector('of-kanban') && !kanban.querySelector('of-alert'))
+          throw new Error('Esperando los datos del Kanban');
         const route = canvasElement.querySelector('book-route-preview');
         if (route && !route.querySelector('h1')) throw new Error('Esperando la vista de Angular');
       },

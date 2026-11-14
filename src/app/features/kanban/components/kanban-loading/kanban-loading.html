@@ -1,0 +1,60 @@
+<p class="of-sr-only" role="status">Cargando tareas…</p>
+<div class="motion-safe:animate-pulse">
+  <div aria-hidden="true" class="mt-6 flex min-h-9 flex-wrap items-center justify-between gap-4">
+    <div class="flex items-center pl-1.5 [&>of-skeleton]:-ml-1.5">
+      <of-skeleton shape="circle" class="size-7 border border-canvas" />
+      <of-skeleton shape="circle" class="size-7 border border-canvas" />
+      <of-skeleton shape="circle" class="size-7 border border-canvas" />
+      <of-skeleton shape="circle" class="size-7 border border-canvas" />
+    </div>
+    <div class="flex items-center gap-4 compact:w-full compact:justify-between">
+      <of-skeleton class="h-4 w-40" /><of-skeleton class="h-9 w-20" />
+    </div>
+  </div>
+  <div
+    id="kanban-panel"
+    role="tabpanel"
+    aria-labelledby="kanban-panel-tab-board"
+    aria-busy="true"
+    class="mt-7 min-h-96"
+  >
+    <div
+      aria-hidden="true"
+      class="-m-0.5 grid grid-cols-[repeat(4,minmax(255px,1fr))] items-start gap-4 overflow-x-auto p-0.5 pb-4 max-[1150px]:grid-cols-[repeat(4,270px)] compact:grid-cols-[repeat(4,250px)] compact:gap-3"
+    >
+      <ng-container [ngTemplateOutlet]="column" />
+      <ng-container [ngTemplateOutlet]="column" />
+      <ng-container [ngTemplateOutlet]="column" />
+      <ng-container [ngTemplateOutlet]="column" />
+    </div>
+  </div>
+</div>
+
+<ng-template #column>
+  <div class="min-w-0">
+    <div class="mb-3 flex h-10 items-center gap-2 border-b border-outline pb-3">
+      <of-skeleton class="h-6 w-24" /><of-skeleton shape="circle" class="size-5" />
+      <of-skeleton class="ml-auto h-3 w-9" />
+    </div>
+    <div class="flex min-h-90 flex-col gap-2.5 rounded-[15px] border border-outline p-2">
+      <ng-container [ngTemplateOutlet]="card" />
+      <ng-container [ngTemplateOutlet]="card" />
+      <ng-container [ngTemplateOutlet]="card" />
+      <of-skeleton class="mx-auto my-3 h-3 w-20" />
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #card>
+  <div class="flex flex-col gap-3 rounded-[11px] bg-surface-hover p-3">
+    <div class="flex gap-1.5"><of-skeleton class="h-4 w-16" /><of-skeleton class="h-4 w-24" /></div>
+    <div class="flex flex-col gap-2">
+      <of-skeleton class="h-3 w-full" /><of-skeleton class="h-3 w-4/5" />
+    </div>
+    <div class="flex items-center gap-1.5">
+      <of-skeleton shape="circle" class="size-3.5" /><of-skeleton class="h-2 w-14" />
+      <of-skeleton shape="circle" class="ml-1 size-3.5" /><of-skeleton class="h-2 w-14" />
+    </div>
+    <of-skeleton class="h-2.5 w-20" />
+  </div>
+</ng-template>

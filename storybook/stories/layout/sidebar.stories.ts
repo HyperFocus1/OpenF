@@ -21,7 +21,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Sidebar y shell reales con sesión demo. La selección sigue al Router. Incluye menú de cuenta y cierre de sesión. Las vistas mantienen únicamente el saludo solicitado; el catálogo no añade contenido al producto.',
+          'Sidebar y shell reales con sesión demo. La selección sigue al Router. Incluye menú de cuenta, cierre de sesión y Kanban con datos locales.',
       },
     },
   },

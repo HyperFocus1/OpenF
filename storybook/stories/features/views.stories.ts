@@ -1,12 +1,11 @@
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { Home } from '@features/home/home';
-import { Kanban } from '@features/kanban/kanban';
 import { Tree } from '@features/tree/tree';
 
 const meta: Meta = {
   title: 'Vistas/Iniciales',
   tags: ['autodocs'],
-  decorators: [moduleMetadata({ imports: [Home, Kanban, Tree] })],
+  decorators: [moduleMetadata({ imports: [Home, Tree] })],
   parameters: {
     docs: {
       description: {
@@ -18,8 +17,4 @@ const meta: Meta = {
 };
 export default meta;
 export const HomeView: StoryObj = { name: 'Home', render: () => ({ template: '<of-home />' }) };
-export const KanbanView: StoryObj = {
-  name: 'Kanban',
-  render: () => ({ template: '<of-kanban />' }),
-};
 export const TreeView: StoryObj = { name: 'Tree', render: () => ({ template: '<of-tree />' }) };

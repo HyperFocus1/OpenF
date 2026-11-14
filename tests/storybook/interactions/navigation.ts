@@ -9,7 +9,11 @@ export async function navigateSidebar({ canvasElement }: CanvasContext): Promise
   for (const title of ['Kanban', 'Tree', 'Home']) {
     const button = await canvas.findByRole('button', { name: title });
     await userEvent.click(button);
-    await expect(await canvas.findByRole('heading', { name: `Hi from ${title}` })).toBeVisible();
+    await expect(
+      await canvas.findByRole('heading', {
+        name: title === 'Kanban' ? 'Tasks' : `Hi from ${title}`,
+      }),
+    ).toBeVisible();
     await waitFor(async () => {
       await expect(button).toHaveAttribute('aria-current', 'page');
     });

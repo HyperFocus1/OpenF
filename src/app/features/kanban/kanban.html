@@ -1,0 +1,184 @@
+<fieldset
+  class="m-0 min-w-0 border-0 p-0"
+  [disabled]="view().busy"
+  [attr.aria-busy]="view().busy || null"
+>
+  <div>
+    <div class="mt-6 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center pl-1.5 [&>of-avatar]:-ml-1.5">
+        @for (member of view().project.members; track member.name) {
+          <of-avatar [name]="member.name" [src]="member.avatarUrl" />
+        }
+        @if (view().activeView === 'board') {
+          <button
+            type="button"
+            aria-label="Nueva tarea"
+            title="Nueva tarea"
+            class="-ml-1 flex size-7 items-center justify-center rounded-full border border-canvas bg-primary text-on-primary hover:brightness-110 [--of-icon-size:15px]"
+            [disabled]="!view().canCreateTask"
+            (click)="action.emit({ type: 'newTaskOpened' })"
+          >
+            <of-icon name="plus" />
+          </button>
+        }
+      </div>
+      @if (view().activeView === 'board') {
+        <div class="flex min-w-0 items-center gap-4 compact:w-full compact:gap-2">
+          <label
+            class="flex w-40 min-w-0 items-center gap-2 text-content-muted [--of-icon-size:14px] compact:flex-1"
+          >
+            <of-icon name="search" /><input
+              #searchInput
+              type="search"
+              aria-label="Buscar tareas"
+              placeholder="Buscar tarea…"
+              class="w-full min-w-0 border-0 bg-transparent py-2 text-[11px] text-content placeholder:text-content-muted"
+              [value]="view().search"
+              (input)="action.emit({ type: 'searchChanged', value: searchInput.value })"
+            />
+          </label>
+          <of-dropdown label="Filtros" panelId="kanban-filters" [count]="view().filterCount">
+            <div class="flex flex-col gap-4">
+              <h2 class="text-[13px] font-medium">Filtrar tareas</h2>
+              <label class="flex flex-col gap-2 text-[11px] text-content-muted"
+                >Prioridad
+                <select
+                  #prioritySelect
+                  aria-label="Prioridad"
+                  class="rounded-lg border border-outline bg-surface p-2 text-xs text-content"
+                  [value]="view().priorityFilter"
+                  (change)="action.emit({ type: 'priorityChanged', value: prioritySelect.value })"
+                >
+                  <option value="all">Todas las prioridades</option>
+                  @for (priority of view().priorityOptions; track priority.id) {
+                    <option [value]="priority.id">{{ priority.label }}</option>
+                  }
+                </select>
+              </label>
+              <label class="flex flex-col gap-2 text-[11px] text-content-muted"
+                >Responsable
+                <select
+                  #assigneeSelect
+                  aria-label="Responsable"
+                  class="rounded-lg border border-outline bg-surface p-2 text-xs text-content"
+                  [value]="view().assigneeFilter"
+                  (change)="action.emit({ type: 'assigneeChanged', value: assigneeSelect.value })"
+                >
+                  <option value="all">Todo el equipo</option>
+                  @for (member of view().project.members; track member.name) {
+                    <option [value]="member.name">{{ member.name }}</option>
+                  }
+                </select>
+              </label>
+              <label class="flex flex-col gap-2 text-[11px] text-content-muted"
+                >Ordenar por
+                <select
+                  #sortSelect
+                  aria-label="Ordenar tareas"
+                  class="rounded-lg border border-outline bg-surface p-2 text-xs text-content"
+                  [value]="view().sortOrder"
+                  (change)="action.emit({ type: 'orderChanged', value: sortSelect.value })"
+                >
+                  <option value="manual">Predeterminado</option>
+                  <option value="priority">Prioridad</option>
+                </select>
+              </label>
+              <button ofButton="ghost" size="sm" (click)="action.emit({ type: 'filtersCleared' })">
+                Limpiar filtros
+              </button>
+            </div>
+          </of-dropdown>
+        </div>
+      }
+    </div>
+    @if (view().busy) {
+      <p role="status" class="mt-3 text-xs text-content-muted">Guardando cambios…</p>
+    }
+    @if (view().error && !view().createOpen && !view().detailOpen) {
+      <of-alert class="mt-3">{{ view().error }}</of-alert>
+    }
+    <div
+      id="kanban-panel"
+      role="tabpanel"
+      [attr.aria-labelledby]="'kanban-panel-tab-' + view().activeView"
+      tabindex="0"
+      class="mt-7 min-h-96"
+    >
+      @if (view().activeView === 'board') {
+        @if (!view().tasks.length && view().hasFilters) {
+          <div class="flex flex-col items-center gap-3 px-5 py-20 text-center">
+            <of-icon name="search" />
+            <h2 class="text-xl font-medium">No encontramos tareas</h2>
+            <p class="text-xs text-content-muted">Prueba con otra búsqueda o ajusta los filtros.</p>
+            <button
+              ofButton="secondary"
+              size="sm"
+              (click)="action.emit({ type: 'filtersCleared' })"
+            >
+              Mostrar todas las tareas
+            </button>
+          </div>
+        } @else {
+          <of-kanban-board
+            [busy]="view().busy"
+            [columns]="view().columns"
+            (opened)="action.emit({ type: 'taskOpened', id: $event })"
+            (added)="action.emit({ type: 'newTaskOpened', columnId: $event })"
+            (moved)="action.emit({ type: 'taskMoved', move: $event })"
+          />
+        }
+      }
+    </div>
+    <p class="of-sr-only" role="status">{{ view().announcement }}</p>
+  </div>
+</fieldset>
+
+<of-drawer
+  #taskDrawer
+  label="Detalle de tarea"
+  variant="compact"
+  scheme="dark"
+  [showHeader]="false"
+  [open]="view().detailOpen"
+  (openChange)="action.emit({ type: 'detailVisibilityChanged', open: $event })"
+>
+  @if (view().selectedTask; as task) {
+    <of-task-detail
+      [busy]="view().busy"
+      [expanded]="taskDrawer.expanded()"
+      (expandedChange)="taskDrawer.expanded.set($event)"
+      (closed)="action.emit({ type: 'detailVisibilityChanged', open: false })"
+      [error]="view().error"
+      [commentRevision]="view().commentRevision"
+      [task]="task"
+      [year]="view().project.year"
+      [columns]="view().columnOptions"
+      [priorities]="view().priorityOptions"
+      (changed)="action.emit({ type: 'taskChanged', id: task.id, changes: $event })"
+      (commented)="action.emit({ type: 'commentAdded', id: task.id, text: $event })"
+      (downloaded)="action.emit({ type: 'fileDownloaded', file: $event })"
+      (reacted)="
+        action.emit({
+          type: 'commentReactionChanged',
+          change: { taskId: task.id, commentId: $event.commentId, emoji: $event.emoji },
+        })
+      "
+    />
+  }
+</of-drawer>
+<of-drawer
+  label="Crear tarea"
+  [open]="view().createOpen"
+  (openChange)="action.emit({ type: 'createVisibilityChanged', open: $event })"
+>
+  @if (view().createOpen && view().newTaskDraft; as draft) {
+    <of-new-task
+      [busy]="view().busy"
+      [error]="view().error"
+      [initialValue]="draft"
+      [columns]="view().columnOptions"
+      [priorities]="view().priorityOptions"
+      (created)="action.emit({ type: 'taskCreated', draft: $event })"
+    />
+  }
+</of-drawer>

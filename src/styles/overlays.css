@@ -1,0 +1,25 @@
+/* CDK containers live outside component encapsulation. Their states use DS tokens. */
+.of-overlay-backdrop {
+  background: color-mix(in srgb, var(--of-canvas) 48%, transparent);
+  transition: opacity 120ms ease-out;
+}
+.of-overlay-backdrop-dark { color-scheme: dark; }
+.of-overlay-backdrop-light { color-scheme: light; }
+@media (prefers-reduced-motion: reduce) {
+  .of-overlay-backdrop { transition: none; }
+}
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: var(--of-radius-sm);
+  box-shadow: var(--of-popover-shadow);
+  font-family: var(--of-font);
+}
+.cdk-drag-placeholder {
+  opacity: 0.25;
+}
+.cdk-drag-animating {
+  transition: transform 180ms ease;
+}
+.cdk-drop-list-dragging of-task-card:not(.cdk-drag-placeholder) {
+  transition: transform 180ms ease;
+}

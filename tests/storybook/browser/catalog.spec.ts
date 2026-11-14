@@ -44,7 +44,7 @@ for (const theme of ['dark', 'light']) {
               axe: { run: (context: string, options: object) => Promise<AxeResults> };
             }
           ).axe;
-          return axe.run('#storybook-root', {
+          return axe.run('body', {
             runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] },
           });
         });

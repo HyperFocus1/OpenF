@@ -14,7 +14,10 @@ Ejecuta `pnpm storybook` desde `web/` y abre http://localhost:6006. Usa Canvas p
 | UI/ActionGroup y PromptInput | Composición, orientación, eventos, entrada y bloqueo durante carga                                            |
 | Auth                         | Validación real, acceso/registro correcto, credenciales incorrectas, correo existente, latencia y desconexión |
 | Layout/Sidebar               | Home/Kanban/Tree, selección por URL, menú de cuenta y cierre de sesión                                        |
-| Vistas                       | Los tres saludos iniciales sin añadir contenido al producto                                                   |
+| UI/Badge, Avatar y Tabs       | Metadatos, responsables y navegación de subsecciones con teclado                                               |
+| UI/Drawer y Dropdown         | CDK Overlay, portales, contención del foco, Escape y clic fuera                                                 |
+| Vistas/Kanban                | Tablero, Lista y Roadmap vacíos, detalle y búsqueda sin resultados con datos locales                            |
+| Vistas/Iniciales             | Home y Tree                                                                                                   |
 
 Las historias con `play` ejecutan un caso de uso y quedan en su estado final. Puedes repetirlo desde Interactions. En las historias de respuesta lenta, el botón permanece bloqueado 1,8 segundos y después completa la acción. Cambia el escenario en Controls o vuelve a la historia Empty para explorar manualmente. Cuenta demo: `demo@openf.local` / `OpenF1234!`.
 

@@ -1,13 +1,20 @@
-@import "tailwindcss" source("./app");
-@import "./styles/tokens.css";
-@import "./styles/base.css";
-@import "./styles/interactions.css";
+@import 'tailwindcss' source('./app');
+@import '@angular/cdk/overlay-prebuilt.css';
+@import './styles/tokens.css';
+@import './styles/base.css';
+@import './styles/interactions.css';
+@import './styles/overlays.css';
 
 @theme inline {
   --font-sans: var(--of-font);
   --color-canvas: var(--of-canvas);
   --color-surface: var(--of-surface);
   --color-surface-active: var(--of-surface-active);
+  --color-surface-lowest: var(--of-surface-lowest);
+  --color-surface-hover: var(--of-surface-hover);
+  --color-selected: var(--of-selected-background);
+  --color-on-selected: var(--of-selected-text);
+  --color-outline: var(--of-outline);
   --color-content: var(--of-text);
   --color-content-muted: var(--of-text-muted);
   --color-content-strong: var(--of-text-strong);
@@ -22,9 +29,13 @@
 }
 
 @custom-variant compact {
-  @media (max-width: 600px) { @slot; }
+  @media (max-width: 600px) {
+    @slot;
+  }
 }
 
 @custom-variant narrow {
-  @media (max-width: 360px) { @slot; }
+  @media (max-width: 360px) {
+    @slot;
+  }
 }
