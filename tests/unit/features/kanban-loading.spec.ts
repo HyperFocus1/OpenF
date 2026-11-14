@@ -3,15 +3,14 @@ import { firstValueFrom, Subject } from 'rxjs';
 import { KANBAN_SERVICE_TOKEN } from '@configs/tokens';
 import { KanbanSnapshot } from '@models/kanban/kanban.model';
 import { KanbanMockServiceImpl } from '@core/services/kanban/kanban-mock-impl.service';
-import { KanbanStateService } from '@core/services/kanban/kanban-state.service';
 import { KanbanPage } from '@features/kanban/kanban-page';
 
 function pendingPage() {
   const request = new Subject<KanbanSnapshot>();
   const readBoard = vi.fn(() => request.asObservable());
   TestBed.overrideComponent(KanbanPage, {
-    set: {
-      providers: [KanbanStateService, { provide: KANBAN_SERVICE_TOKEN, useValue: { readBoard } }],
+    add: {
+      providers: [{ provide: KANBAN_SERVICE_TOKEN, useValue: { readBoard } }],
     },
   });
   const fixture = TestBed.createComponent(KanbanPage);

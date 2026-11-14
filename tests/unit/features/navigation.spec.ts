@@ -3,11 +3,14 @@ import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { routes } from '../../../src/app/app.routes';
 import { provideAuth } from '@configs/auth.providers.mock';
+import { provideAssistant } from '@configs/assistant.providers';
 import { SessionService } from '@core/services/auth/session.service';
 
 describe('Vistas y navegación del sidebar', () => {
   beforeEach(() =>
-    TestBed.configureTestingModule({ providers: [provideRouter(routes), provideAuth()] }),
+    TestBed.configureTestingModule({
+      providers: [provideRouter(routes), provideAuth(), provideAssistant()],
+    }),
   );
 
   it('mantiene los iconos de acción delineados al alternar la contraseña', async () => {

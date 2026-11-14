@@ -6,7 +6,18 @@ import {
   CdkDropList,
   CdkDropListGroup,
 } from '@angular/cdk/drag-drop';
-import { Component, input, output } from '@angular/core';
+import {
+  afterNextRender,
+  Component,
+  DestroyRef,
+  ElementRef,
+  inject,
+  Injector,
+  input,
+  OnChanges,
+  output,
+  SimpleChanges,
+} from '@angular/core';
 import { Icon, Tag } from '@shared/ui';
 import { ColumnId } from '@models/kanban/kanban.model';
 import { BoardColumnView, KanbanTaskView, TaskDrop } from '@models/kanban/kanban-view.model';
@@ -70,18 +81,15 @@ import { TaskCard } from '../task-card/task-card';
             @for (task of column.tasks; track task.id) {
               <of-task-card
                 cdkDrag
-                [cdkDragDisabled]="busy()"
+                class="relative"
+                [attr.data-task-id]="task.id"
                 [cdkDragData]="task"
                 [cdkDragStartDelay]="{ touch: 200, mouse: 0 }"
                 [task]="task"
                 (opened)="opened.emit($event)"
               >
                 <ng-template cdkDragPreview [matchSize]="true"
-                  ><of-task-card
-                    [task]="task"
-                    aria-hidden="true"
-                    data-theme="dark"
-                    class="rotate-[5deg]"
+                  ><of-task-card [task]="task" aria-hidden="true" class="rotate-[5deg]"
                 /></ng-template>
                 <ng-template cdkDragPlaceholder
                   ><div
@@ -105,18 +113,87 @@ import { TaskCard } from '../task-card/task-card';
     </div>
   `,
 })
-export class KanbanBoard {
-  readonly busy = input(false);
+export class KanbanBoard implements OnChanges {
   readonly columns = input.required<readonly BoardColumnView[]>();
   readonly opened = output<string>();
   readonly added = output<ColumnId>();
   readonly moved = output<TaskDrop>();
+  private readonly element = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly injector = inject(Injector);
+  private readonly animations = new Map<string, Animation>();
+  private skipDropAnimation = false;
+
+  constructor() {
+    inject(DestroyRef).onDestroy(() => {
+      for (const animation of this.animations.values()) animation.cancel();
+    });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (!changes['columns']) return;
+    // CDK already slides the preview into its placeholder on drop.
+    if (this.skipDropAnimation) {
+      this.skipDropAnimation = false;
+      return;
+    }
+    if (changes['columns'].firstChange || this.reducedMotion()) return;
+
+    const positions = new Map(
+      this.cards().map((card) => [card.dataset['taskId']!, card.getBoundingClientRect()]),
+    );
+    afterNextRender(() => this.animateLayout(positions), { injector: this.injector });
+  }
 
   protected drop(event: CdkDragDrop<BoardColumnView, BoardColumnView, KanbanTaskView>): void {
+    if (
+      !event.isPointerOverContainer ||
+      (event.previousContainer === event.container && event.previousIndex === event.currentIndex)
+    )
+      return;
+    this.skipDropAnimation = true;
     this.moved.emit({
       id: event.item.data.id,
       columnId: event.container.data.id,
       index: event.currentIndex,
     });
+  }
+
+  private cards(): HTMLElement[] {
+    return Array.from(
+      this.element.nativeElement.querySelectorAll<HTMLElement>(
+        'of-task-card[data-task-id]:not(.cdk-drag-placeholder):not(.cdk-drag-dragging)',
+      ),
+    );
+  }
+
+  private reducedMotion(): boolean {
+    return (
+      this.element.nativeElement.ownerDocument.defaultView?.matchMedia?.(
+        '(prefers-reduced-motion: reduce)',
+      ).matches ?? false
+    );
+  }
+
+  private animateLayout(positions: ReadonlyMap<string, DOMRect>): void {
+    if (this.reducedMotion()) return;
+    for (const card of this.cards()) {
+      const id = card.dataset['taskId']!;
+      const before = positions.get(id);
+      if (!before || !card.animate) continue;
+      this.animations.get(id)?.cancel();
+      const after = card.getBoundingClientRect();
+      const x = before.left - after.left;
+      const y = before.top - after.top;
+      if (Math.abs(x) < 1 && Math.abs(y) < 1) continue;
+      const animation = card.animate(
+        [
+          { transform: `translate(${x}px, ${y}px)`, zIndex: 1 },
+          { transform: 'translate(0, 0)', zIndex: 1 },
+        ],
+        { duration: 240, easing: 'cubic-bezier(0.2, 0, 0, 1)' },
+      );
+      this.animations.set(id, animation);
+      animation.onfinish = () => this.animations.delete(id);
+    }
   }
 }

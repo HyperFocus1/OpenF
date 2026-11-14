@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, DOCUMENT, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, map } from 'rxjs';
@@ -7,6 +7,7 @@ import { authError } from '@shared/utils/auth-error';
 import { Button, Icon, IconButton, IconName, Popover } from '@shared/ui';
 
 interface NavigationItem { label: string; icon: IconName; path: string; }
+type Theme = 'system' | 'light' | 'dark';
 
 @Component({
   selector: 'of-sidebar',
@@ -17,6 +18,13 @@ interface NavigationItem { label: string; icon: IconName; path: string; }
 export class Sidebar {
   protected readonly session = inject(SessionService);
   private readonly router = inject(Router);
+  private readonly document = inject(DOCUMENT);
+  protected readonly theme = signal<Theme>(this.initialTheme());
+  protected readonly themes: readonly { value: Theme; label: string }[] = [
+    { value: 'system', label: 'Sistema' },
+    { value: 'light', label: 'Claro' },
+    { value: 'dark', label: 'Oscuro' },
+  ];
   protected readonly currentPath = toSignal(this.router.events.pipe(
     filter((event): event is NavigationEnd => event instanceof NavigationEnd),
     map(event => event.urlAfterRedirects.split(/[?#]/)[0]),
@@ -29,6 +37,31 @@ export class Sidebar {
     { label: 'Kanban', icon: 'kanban', path: '/app/kanban' },
     { label: 'Tree', icon: 'tree', path: '/app/tree' },
   ];
+
+  constructor() {
+    this.document.documentElement.dataset['theme'] = this.theme();
+  }
+
+  protected setTheme(theme: Theme): void {
+    this.theme.set(theme);
+    this.document.documentElement.dataset['theme'] = theme;
+    try {
+      this.document.defaultView?.localStorage.setItem('openf-theme', theme);
+    } catch {
+      // The selection still applies when browser storage is unavailable.
+    }
+  }
+
+  private initialTheme(): Theme {
+    let stored: string | null = null;
+    try {
+      stored = this.document.defaultView?.localStorage.getItem('openf-theme') ?? null;
+    } catch {
+      // Fall back to the current document theme or the system preference.
+    }
+    const theme = stored ?? this.document.documentElement.dataset['theme'];
+    return theme === 'light' || theme === 'dark' ? theme : 'system';
+  }
 
   protected navigate(path: string): void {
     void this.router.navigateByUrl(path);

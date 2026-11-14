@@ -1,8 +1,4 @@
-<fieldset
-  class="m-0 min-w-0 border-0 p-0"
-  [disabled]="view().busy"
-  [attr.aria-busy]="view().busy || null"
->
+<fieldset class="m-0 min-w-0 border-0 p-0" [attr.aria-busy]="view().busy || savingMoves() || null">
   <div>
     <div class="mt-6 flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center pl-1.5 [&>of-avatar]:-ml-1.5">
@@ -91,9 +87,11 @@
         </div>
       }
     </div>
-    @if (view().busy) {
-      <p role="status" class="mt-3 text-xs text-content-muted">Guardando cambios…</p>
-    }
+    <div class="relative">
+      @if (view().busy || savingMoves()) {
+        <p role="status" class="absolute mt-1 text-xs text-content-muted">Guardando cambios…</p>
+      }
+    </div>
     @if (view().error && !view().createOpen && !view().detailOpen) {
       <of-alert class="mt-3">{{ view().error }}</of-alert>
     }
@@ -120,7 +118,6 @@
           </div>
         } @else {
           <of-kanban-board
-            [busy]="view().busy"
             [columns]="view().columns"
             (opened)="action.emit({ type: 'taskOpened', id: $event })"
             (added)="action.emit({ type: 'newTaskOpened', columnId: $event })"
@@ -137,7 +134,6 @@
   #taskDrawer
   label="Detalle de tarea"
   variant="compact"
-  scheme="dark"
   [showHeader]="false"
   [open]="view().detailOpen"
   (openChange)="action.emit({ type: 'detailVisibilityChanged', open: $event })"

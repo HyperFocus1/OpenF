@@ -1,0 +1,30 @@
+@if (interactive()) {
+  <button
+    type="button"
+    class="sprite-button"
+    [attr.aria-label]="label()"
+    [disabled]="disabled()"
+    (click)="activated.emit()"
+  >
+    <ng-container [ngTemplateOutlet]="graphic" />
+  </button>
+} @else {
+  <span role="img" [attr.aria-label]="label()"><ng-container [ngTemplateOutlet]="graphic" /></span>
+}
+
+<ng-template #graphic>
+  <span class="sprite-facing"
+    ><span class="sprite-motion"
+      ><span class="sprite-window">
+        @for (image of images(); track image.src + ':' + image.width + ':' + image.height) {
+          <img
+            class="sprite-image"
+            [ngSrc]="image.src"
+            [width]="image.width"
+            [height]="image.height"
+            alt=""
+            draggable="false"
+          />
+        }</span></span
+  ></span>
+</ng-template>

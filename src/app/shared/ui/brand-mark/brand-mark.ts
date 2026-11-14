@@ -1,15 +1,19 @@
 import { Component, input } from '@angular/core';
+import { OPENF_MARK_PATH } from './brand-mark.paths';
 
 @Component({
   selector: 'of-brand-mark',
-  template: '<svg viewBox="0 0 32 32" fill="none" aria-hidden="true" focusable="false"><path d="M12 5H8a3 3 0 0 0-3 3v4m0 8v4a3 3 0 0 0 3 3h4m8 0h4a3 3 0 0 0 3-3v-4m0-8V8a3 3 0 0 0-3-3h-4" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><path d="M13 22V11h9m-9 5h7" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  template: `<svg viewBox="0 0 32 32" fill="currentColor" aria-hidden="true" focusable="false"><path [attr.d]="path" fill-rule="evenodd" /></svg>`,
   host: {
     '[class.brand-tile]': 'tile()',
     '[class.brand-compact]': 'compact()',
   },
-  styles: [':host{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;color:var(--of-text-strong)}svg{width:32px;height:32px}:host(.brand-tile){width:64px;height:64px;background:var(--of-text-strong);color:var(--of-canvas);border-radius:16px}:host(.brand-compact) svg{width:28px;height:28px}'],
+  styles: [
+    ':host{display:inline-flex;flex:none;align-items:center;justify-content:center;width:40px;height:40px;color:var(--of-primary)}svg{width:40px;height:40px}:host(.brand-tile){width:64px;height:64px;background:var(--of-primary);color:var(--of-on-primary);border-radius:20px}:host(.brand-compact){width:32px;height:32px}:host(.brand-compact) svg{width:28px;height:28px}',
+  ],
 })
 export class BrandMark {
+  protected readonly path = OPENF_MARK_PATH;
   readonly tile = input(false);
   readonly compact = input(false);
 }

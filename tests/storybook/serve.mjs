@@ -3,7 +3,8 @@ import { createReadStream } from 'node:fs';
 import { stat } from 'node:fs/promises';
 import { extname, resolve, sep } from 'node:path';
 
-const root = resolve('storybook-static');
+const root = resolve(process.env.STORYBOOK_STATIC_DIR ?? 'storybook-static');
+const port = Number(process.env.STORYBOOK_TEST_PORT ?? 6007);
 const mime = {
   '.html': 'text/html',
   '.js': 'text/javascript',
@@ -14,6 +15,8 @@ const mime = {
   '.woff2': 'font/woff2',
   '.woff': 'font/woff',
   '.png': 'image/png',
+  '.webp': 'image/webp',
+  '.jpg': 'image/jpeg',
 };
 
 createServer(async (request, response) => {
@@ -36,4 +39,4 @@ createServer(async (request, response) => {
   } catch {
     response.writeHead(404).end();
   }
-}).listen(6007, '127.0.0.1');
+}).listen(port, '127.0.0.1');

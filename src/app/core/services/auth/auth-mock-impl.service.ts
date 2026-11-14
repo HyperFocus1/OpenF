@@ -8,7 +8,11 @@ interface DemoAccount { user: SessionUser; password: string; }
 @Injectable()
 export class AuthMockServiceImpl implements AuthService {
   private readonly accounts: DemoAccount[] = [{
-    user: { id: 1, email: 'demo@openf.local', name: 'Demo', lastName: 'OpenF' },
+    user: { id: 1, email: 'admin@gmail.com', name: 'Demo', lastName: 'OpenF' },
+    password: '1234',
+  },
+  {
+    user: { id: 2, email: 'demo@openf.local', name: 'Demo', lastName: 'OpenF' },
     password: 'OpenF1234!',
   }];
   private currentUser: SessionUser | null = null;

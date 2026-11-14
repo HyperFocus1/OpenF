@@ -9,7 +9,7 @@ import { KanbanTaskView } from '@models/kanban/kanban-view.model';
   template: `
     <button
       type="button"
-      class="task-card flex w-full flex-col items-stretch rounded-[11px] border border-transparent bg-surface-hover p-3 text-left text-content transition-[border-color,box-shadow] hover:border-outline hover:shadow-lg"
+      class="task-card flex w-full select-none flex-col items-stretch rounded-[11px] border border-transparent bg-surface-hover p-3 text-left text-content transition-[border-color,box-shadow] hover:border-outline hover:shadow-lg"
       [attr.aria-label]="task().title"
       (click)="opened.emit(task().id)"
     >
@@ -19,7 +19,8 @@ import { KanbanTaskView } from '@models/kanban/kanban-view.model';
           [alt]="cover.alt"
           [width]="cover.width"
           [height]="cover.height"
-          class="mb-2.5 aspect-[1.8] w-full rounded-lg object-cover"
+          draggable="false"
+          class="pointer-events-none mb-2.5 aspect-[1.8] w-full rounded-lg object-cover"
         />
       }
       <span class="flex items-start gap-1.5">

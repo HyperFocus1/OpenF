@@ -144,12 +144,16 @@ test('CDK mueve una tarjeta entre columnas y conserva el orden', async ({ page }
   await page.mouse.move(sourceBox.x + 50, sourceBox.y + 50, { steps: 5 });
   await page.mouse.move(destinationBox.x + 100, destinationBox.y + 20, { steps: 20 });
   await page.mouse.up();
+  const saving = page.getByText('Guardando cambios…', { exact: true });
+  await expect(saving).toBeVisible();
   await expect(
     page.getByRole('region', { name: 'Work in progress', exact: true }).locator('of-task-card'),
   ).toHaveCount(4);
   await expect(
     page.getByRole('region', { name: 'To do', exact: true }).locator('of-task-card'),
   ).toHaveCount(2);
+  await expect(saving).toBeVisible();
+  await expect(saving).not.toBeVisible();
   await page
     .getByRole('region', { name: 'Work in progress', exact: true })
     .getByRole('button', {
@@ -158,6 +162,92 @@ test('CDK mueve una tarjeta entre columnas y conserva el orden', async ({ page }
     })
     .click();
   await expect(page.getByRole('dialog').getByLabel('Estado', { exact: true })).toHaveValue('todo');
+});
+
+test('permite abrir y arrastrar desde la portada mientras otra tarjeta se está guardando', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1600, height: 1100 });
+  // Extend only the mock's timer in this test so both gestures happen before confirmation.
+  await page.evaluate(() => {
+    const schedule = window.setInterval.bind(window);
+    window.setInterval = (handler, timeout, ...args) =>
+      schedule(handler, timeout === 400 ? 2000 : timeout, ...args);
+    document.addEventListener('dragstart', (event) => {
+      if ((event.target as Element).matches('img'))
+        document.body.dataset['nativeImageDrag'] = 'true';
+    });
+  });
+  const drag = async (source: { x: number; y: number }, column: string) => {
+    const target = (await page
+      .locator(`[data-column-id="${column}"] .cdk-drop-list`)
+      .boundingBox())!;
+    await page.mouse.move(source.x, source.y);
+    await page.mouse.down();
+    await page.mouse.move(source.x + 10, source.y + 10, { steps: 3 });
+    await page.mouse.move(target.x + 100, target.y + 25, { steps: 12 });
+    await expect(page.locator('.cdk-drag-preview')).toBeVisible();
+    await page.mouse.up();
+  };
+  const first = (await page.locator('[data-task-id="OF-001"]').boundingBox())!;
+  await drag({ x: first.x + 40, y: first.y + 40 }, 'done');
+  const saving = page.getByText('Guardando cambios…', { exact: true });
+  await expect(saving).toBeVisible();
+  await expect(page.locator('[data-column-id="done"] [data-task-id="OF-001"]')).toBeVisible();
+
+  const card = page.locator('[data-task-id="OF-006"] button');
+  await expect(card.locator('img').first()).toHaveAttribute('draggable', 'false');
+  await card.click({ position: { x: 60, y: 60 } });
+  const detail = page.getByRole('dialog', { name: 'Detalle de tarea', exact: true });
+  await expect(
+    detail.getByRole('heading', { name: 'Inventory Overview', exact: true }),
+  ).toBeVisible();
+  await detail.getByRole('button', { name: 'Cerrar panel', exact: true }).click();
+  await expect(detail).not.toBeVisible();
+
+  const cover = (await card.locator('img').first().boundingBox())!;
+  await drag({ x: cover.x + 60, y: cover.y + 60 }, 'review');
+  await expect(page.locator('[data-column-id="review"] [data-task-id="OF-006"]')).toBeVisible();
+  await expect(saving).toBeVisible();
+  expect(await page.locator('body').getAttribute('data-native-image-drag')).toBeNull();
+  await expect(saving).not.toBeVisible({ timeout: 12000 });
+  await expect(page.locator('[data-column-id="done"] [data-task-id="OF-001"]')).toBeVisible();
+  await expect(page.locator('[data-column-id="review"] [data-task-id="OF-006"]')).toBeVisible();
+});
+
+test('las opciones cambian el tema, siguen el sistema y conservan la selección', async ({
+  page,
+}) => {
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await page.goto('/iframe.html?id=layout-sidebar--kanban&viewMode=story&globals=theme:system');
+  const layout = page.locator('of-kanban-layout');
+  await expect(layout).toHaveCSS('background-color', 'rgb(10, 10, 12)');
+  await page.getByRole('button', { name: 'Opciones de cuenta', exact: true }).click();
+  const options = page.getByRole('dialog', { name: 'Opciones de cuenta', exact: true });
+  await expect(options.getByRole('button', { name: 'Sistema', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  await page.emulateMedia({ colorScheme: 'light' });
+  await expect(layout).toHaveCSS('background-color', 'rgb(247, 248, 245)');
+  await options.getByRole('button', { name: 'Oscuro', exact: true }).click();
+  await expect(layout).toHaveCSS('background-color', 'rgb(10, 10, 12)');
+  await options.getByRole('button', { name: 'Claro', exact: true }).click();
+  await expect(layout).toHaveCSS('background-color', 'rgb(247, 248, 245)');
+
+  await page.reload();
+  await expect(layout).toHaveCSS('background-color', 'rgb(247, 248, 245)');
+  await page.getByRole('button', { name: 'Opciones de cuenta', exact: true }).click();
+  await expect(options.getByRole('button', { name: 'Claro', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  await page.keyboard.press('Escape');
+  await page.getByRole('button', { name: taskTitle, exact: true }).click();
+  await expect(page.getByRole('dialog', { name: 'Detalle de tarea', exact: true })).toHaveCSS(
+    'background-color',
+    'rgb(255, 255, 255)',
+  );
 });
 
 test('los archivos se descargan como documentos locales', async ({ page }) => {

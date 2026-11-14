@@ -1,16 +1,16 @@
 import { Component, inject } from '@angular/core';
 import { provideKanban } from '@configs/kanban.providers';
-import { KanbanStateService } from '@core/services/kanban/kanban-state.service';
 import { Kanban } from './kanban';
 import { Alert, Button } from '@shared/ui';
 import { KanbanLayout } from './components/kanban-layout/kanban-layout';
 import { KanbanLoading } from './components/kanban-loading/kanban-loading';
+import { KanbanUiStateService } from './kanban-ui-state.service';
 
 /** Route boundary: connects DI with the input/output view, without mapping source data. */
 @Component({
   selector: 'of-kanban-page',
   imports: [Alert, Button, Kanban, KanbanLayout, KanbanLoading],
-  providers: [provideKanban()],
+  providers: [provideKanban(), KanbanUiStateService],
   template: `
     <of-kanban-layout
       [tabs]="state.tabs"
@@ -18,7 +18,11 @@ import { KanbanLoading } from './components/kanban-loading/kanban-loading';
       (activeViewChange)="state.dispatch({ type: 'viewChanged', value: $event })"
     >
       @if (state.view(); as view) {
-        <of-kanban [view]="view" (action)="state.dispatch($event)" />
+        <of-kanban
+          [view]="view"
+          [savingMoves]="state.savingMoves()"
+          (action)="state.dispatch($event)"
+        />
       } @else if (state.error()) {
         <div
           id="kanban-panel"
@@ -47,5 +51,5 @@ import { KanbanLoading } from './components/kanban-loading/kanban-loading';
   host: { class: 'block min-w-0', '[attr.aria-busy]': 'state.loading() || null' },
 })
 export class KanbanPage {
-  protected readonly state = inject(KanbanStateService);
+  protected readonly state = inject(KanbanUiStateService);
 }

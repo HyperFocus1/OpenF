@@ -23,3 +23,9 @@
 .cdk-drop-list-dragging of-task-card:not(.cdk-drag-placeholder) {
   transition: transform 180ms ease;
 }
+@media (prefers-reduced-motion: reduce) {
+  .cdk-drag-animating,
+  .cdk-drop-list-dragging of-task-card:not(.cdk-drag-placeholder) {
+    transition: none;
+  }
+}

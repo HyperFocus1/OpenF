@@ -19,7 +19,7 @@ import { Tabs, TabOption } from '@shared/ui';
       <ng-content />
     </div>
   `,
-  host: { class: 'block min-h-dvh min-w-0 bg-canvas text-content', 'data-theme': 'dark' },
+  host: { class: 'block min-h-dvh min-w-0 bg-canvas text-content' },
 })
 export class KanbanLayout {
   readonly tabs = input.required<readonly TabOption[]>();

@@ -18,6 +18,15 @@ export type { BadgeTone } from './badge/badge';
 export { Avatar } from './avatar/avatar';
 export { Tag } from './tag/tag';
 export { Skeleton } from './skeleton/skeleton';
+export { AssistantSprite } from './assistant-sprite/assistant-sprite';
+export { OPENF_ASSISTANT_SPRITES } from './assistant-sprite/assistant-sprite.types';
+export type {
+  AssistantAtlas,
+  AssistantSprites,
+  AssistantState,
+  AssistantVariant,
+  AssistantDirection,
+} from './assistant-sprite/assistant-sprite.types';
 export { Tabs } from './tabs/tabs';
 export type { TabOption } from './tabs/tabs';
 export { Drawer } from './drawer/drawer';

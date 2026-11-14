@@ -8,7 +8,9 @@ interface Entry {
   name: string;
   type: string;
 }
-const index = JSON.parse(readFileSync('storybook-static/index.json', 'utf8')) as {
+const index = JSON.parse(
+  readFileSync(`${process.env['STORYBOOK_STATIC_DIR'] ?? 'storybook-static'}/index.json`, 'utf8'),
+) as {
   entries: Record<string, Entry>;
 };
 

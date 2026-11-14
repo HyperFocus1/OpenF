@@ -11,11 +11,13 @@ import { routes } from '../../src/app/app.routes';
 import { AUTH_SERVICE_TOKEN } from '@configs/tokens';
 import { SessionService } from '@core/services/auth/session.service';
 import { AuthFixture, AuthScenario } from '../fixtures/auth/auth.fixture';
+import { AssistantHost } from '@layout/assistant/assistant-host';
+import { provideAssistant } from '@configs/assistant.providers';
 
 @Component({
   selector: 'book-route-preview',
-  imports: [RouterOutlet],
-  template: '<router-outlet />',
+  imports: [RouterOutlet, AssistantHost],
+  template: '<router-outlet /><of-app-assistant />',
   host: { '(click)': 'routeAnchor($event)' },
 })
 export class RoutePreview {
@@ -62,5 +64,6 @@ export const routePreviewProviders = applicationConfig({
     provideLocationMocks(),
     AuthFixture,
     { provide: AUTH_SERVICE_TOKEN, useExisting: AuthFixture },
+    provideAssistant(),
   ],
 });

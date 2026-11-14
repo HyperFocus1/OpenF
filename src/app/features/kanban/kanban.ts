@@ -12,5 +12,6 @@ import { TaskDetail } from './components/task-detail/task-detail';
 })
 export class Kanban {
   readonly view = input.required<KanbanViewModel>();
+  readonly savingMoves = input(false);
   readonly action = output<KanbanAction>();
 }

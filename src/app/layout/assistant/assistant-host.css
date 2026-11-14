@@ -1,0 +1,48 @@
+.assistant-stage {
+  --assistant-actor: 96px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--assistant-actor);
+  height: var(--assistant-actor);
+  pointer-events: auto;
+  transform: translate3d(
+    calc(
+      var(--of-rail-width) + 12px + var(--assistant-x) *
+        (100vw - var(--of-rail-width) - var(--assistant-actor) - 24px)
+    ),
+    calc(12px + var(--assistant-y) * (100dvh - var(--assistant-actor) - 24px)),
+    0
+  );
+  transition: transform var(--assistant-travel) cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.assistant-stage[data-paused='true'] {
+  transition: none;
+}
+.assistant-message {
+  position: absolute;
+  right: 8px;
+  bottom: calc(100% - 10px);
+  width: max-content;
+  max-width: min(220px, calc(100vw - var(--of-rail-width) - 24px));
+  margin: 0;
+  border: 1px solid var(--of-outline-subtle);
+  border-radius: 12px 12px 3px 12px;
+  background: var(--of-surface);
+  color: var(--of-text);
+  padding: 10px 12px;
+  font-size: 12px;
+  line-height: 18px;
+  box-shadow: var(--of-popover-shadow);
+  pointer-events: none;
+}
+.assistant-message.message-start {
+  right: auto;
+  left: 8px;
+  border-radius: 12px 12px 12px 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .assistant-stage {
+    transition: none;
+  }
+}

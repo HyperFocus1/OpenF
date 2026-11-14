@@ -1,4 +1,5 @@
 import { Component, computed, input } from '@angular/core';
+import { OPENF_MARK_PATH } from '../brand-mark/brand-mark.paths';
 
 const paths = {
   expand: 'M8 3H3v5m13 13h5v-5M3 3l7 7m11 11-7-7',
@@ -14,8 +15,7 @@ const paths = {
   burst:
     'M12 1l2.8 4.2 5-1-1 5L23 12l-4.2 2.8 1 5-5-1L12 23l-2.8-4.2-5 1 1-5L1 12l4.2-2.8-1-5 5 1Z',
   send: 'm4 5 16 7-16 7 3-7-3-7Zm3 7h13',
-  brand:
-    'M9 4H6a2 2 0 0 0-2 2v3m0 6v3a2 2 0 0 0 2 2h3m6 0h3a2 2 0 0 0 2-2v-3m0-6V6a2 2 0 0 0-2-2h-3M10 17V8h7m-7 4h5',
+  brand: OPENF_MARK_PATH,
   kanban: 'M4 4h4v16H4ZM10 4h4v10h-4ZM16 4h4v14h-4Z',
   tree: 'M9 3h6v5H9ZM3 16h5v5H3ZM16 16h5v5h-5ZM12 8v4M5.5 16v-4h13v4',
   home: 'm3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z',
@@ -62,7 +62,7 @@ export function isIconName(value: string): value is IconName {
 @Component({
   selector: 'of-icon',
   template:
-    '<svg viewBox="0 0 24 24" [attr.fill]="fill()" stroke="currentColor" [attr.stroke-width]="name() === \'apps\' ? 4 : 1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path [attr.d]="path()" /></svg>',
+    '<svg [attr.viewBox]="name() === \'brand\' ? \'0 0 32 32\' : \'0 0 24 24\'" [attr.fill]="fill()" [attr.stroke]="name() === \'brand\' ? \'none\' : \'currentColor\'" [attr.stroke-width]="name() === \'apps\' ? 4 : 1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path [attr.d]="path()" [attr.fill-rule]="name() === \'brand\' ? \'evenodd\' : null" /></svg>',
   styles: [
     ':host{display:inline-flex;width:var(--of-icon-size,22px);height:var(--of-icon-size,22px);flex:none;align-items:center;justify-content:center}svg{width:100%;height:100%;overflow:visible}',
   ],
@@ -71,7 +71,7 @@ export class Icon {
   readonly filled = input(false);
   readonly name = input.required<IconName>();
   protected readonly fill = computed(() =>
-    this.filled() || this.name() === 'burst' ? 'currentColor' : 'none',
+    this.filled() || this.name() === 'burst' || this.name() === 'brand' ? 'currentColor' : 'none',
   );
   protected readonly path = computed(() => paths[this.name()]);
 }
